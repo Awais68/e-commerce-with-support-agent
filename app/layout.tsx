@@ -17,7 +17,7 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: "Awais Niaz | Luxury Essentials",
+  title: "SN Collections | Luxury Essentials",
   description: "Timeless elegance, modern refinement. Discover our curated collection of luxury essentials.",
 }
 

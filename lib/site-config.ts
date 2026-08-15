@@ -1,8 +1,8 @@
 export const siteConfig = {
-  brand: "Awais Niaz",
+  brand: "SN Collections",
   whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "923001234567",
-  whatsappMessage: "Hello Awais Niaz, I would like some assistance.",
-  conciergeEmail: "concierge@awaisniaz.com",
+  whatsappMessage: "Hello SN Collections, I would like some assistance.",
+  conciergeEmail: "concierge@sncollections.com",
 }
 
 export function whatsappUrl(message: string = siteConfig.whatsappMessage): string {

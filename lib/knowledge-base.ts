@@ -21,7 +21,7 @@ export const knowledgeBase: KnowledgeEntry[] = [
     title: "Greeting",
     keywords: ["hi", "hello", "hey", "salam", "assalam", "good morning", "good evening", "good afternoon", "help", "start"],
     answer:
-      "Welcome to Awais Niaz. I am your personal concierge — here to assist you with our luxury collection, orders, shipping, returns and care. How may I help you today?",
+      "Welcome to SN Collections. I am your personal concierge — here to assist you with our luxury collection, orders, shipping, returns and care. How may I help you today?",
     suggestions: DEFAULT_SUGGESTIONS,
   },
   {
@@ -101,7 +101,7 @@ export const knowledgeBase: KnowledgeEntry[] = [
     title: "Craftsmanship & origin",
     keywords: ["made", "made in", "crafted", "craftsmanship", "artisan", "material", "materials", "fabric", "leather", "silk", "cashmere", "wool", "linen", "quality", "origin", "italy", "florence", "sustainable", "ethically"],
     answer:
-      "Every Awais Niaz piece is crafted by master artisans in Florence and Como, Italy, using materials such as Grade-A Mongolian cashmere, mulberry silk, Super 150s wool and full-grain calf leather. We are committed to sustainable, ethical production and each piece carries a numbered authenticity tag.",
+      "Every SN Collections piece is crafted by master artisans in Florence and Como, Italy, using materials such as Grade-A Mongolian cashmere, mulberry silk, Super 150s wool and full-grain calf leather. We are committed to sustainable, ethical production and each piece carries a numbered authenticity tag.",
     suggestions: ["Tell me about your cashmere", "What is your shipping policy?"],
   },
   {
@@ -125,7 +125,7 @@ export const knowledgeBase: KnowledgeEntry[] = [
     title: "Contact & human concierge",
     keywords: ["contact", "human", "agent", "person", "real", "call", "phone", "email", "talk", "speak", "representative", "live", "whatsapp", "support"],
     answer:
-      "For personal assistance, our human concierge team is available 7 days a week. You can reach us instantly on WhatsApp (tap the green button on the right) or email concierge@awaisniaz.com. If you need me to transfer you to a live agent, just say 'connect me to an agent'.",
+      "For personal assistance, our human concierge team is available 7 days a week. You can reach us instantly on WhatsApp (tap the green button on the right) or email concierge@sncollections.com. If you need me to transfer you to a live agent, just say 'connect me to an agent'.",
     suggestions: ["Chat on WhatsApp", "What is your shipping policy?"],
   },
   {
@@ -180,10 +180,13 @@ function categoryEntries(): KnowledgeEntry[] {
         id: `category-${c.toLowerCase().replace(/\s+/g, "-")}`,
         title: `${c} collection`,
         keywords: [c.toLowerCase()],
-        answer: `In our ${c} collection we currently offer: ${items
-          .map((p) => `${p.name} at ${p.price.toLocaleString()} USD`)
-          .join(", ")}. Would you like more details on any of these pieces?`,
-        suggestions: items.slice(0, 3).map((p) => `Tell me about the ${p.name}`),
+        answer:
+          items.length > 0
+            ? `In our ${c} collection we currently offer: ${items
+                .map((p) => `${p.name} at ${p.price.toLocaleString()} USD`)
+                .join(", ")}. Would you like more details on any of these pieces?`
+            : `Our ${c} collection features a curated selection of pieces sourced from our partner houses. You can browse the full ${c} edit in the Collections menu on the website.`,
+        suggestions: items.length > 0 ? items.slice(0, 3).map((p) => `Tell me about the ${p.name}`) : DEFAULT_SUGGESTIONS,
       }
     })
 }

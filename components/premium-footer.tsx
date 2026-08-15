@@ -2,16 +2,22 @@
 
 import { motion } from "framer-motion"
 import Link from "next/link"
-import { Instagram, Facebook, Twitter } from "lucide-react"
+import { Instagram, Facebook, Linkedin } from "lucide-react"
+
+const socialLinks = [
+  { href: "https://www.instagram.com/awaisshaikh0002/", label: "Instagram", Icon: Instagram },
+  { href: "https://www.facebook.com/awais.shaikh.662440/", label: "Facebook", Icon: Facebook },
+  { href: "https://www.linkedin.com/in/awaisniaz-dev/", label: "LinkedIn", Icon: Linkedin },
+]
 
 export function PremiumFooter() {
   const footerLinks = {
     shop: [
-      { label: "New Arrivals", href: "/shop/new" },
-      { label: "Women", href: "/shop/women" },
-      { label: "Men", href: "/shop/men" },
-      { label: "Accessories", href: "/shop/accessories" },
-      { label: "Timepieces", href: "/shop/timepieces" },
+      { label: "New Arrivals", href: "/shop" },
+      { label: "Women", href: "/shop?category=Women" },
+      { label: "Men", href: "/shop?category=Men" },
+      { label: "Accessories", href: "/shop?category=Accessories" },
+      { label: "Timepieces", href: "/shop?category=Shoes" },
     ],
     about: [
       { label: "Our Heritage", href: "/heritage" },
@@ -67,7 +73,7 @@ export function PremiumFooter() {
             <h4 className="text-xs tracking-[0.2em] uppercase mb-6 text-background/60">Shop</h4>
             <ul className="space-y-3">
               {footerLinks.shop.map((link) => (
-                <li key={link.href}>
+                <li key={link.href + link.label}>
                   <Link href={link.href} className="text-sm text-background/80 hover:text-background transition-colors">
                     {link.label}
                   </Link>
@@ -119,18 +125,21 @@ export function PremiumFooter() {
         <div className="pt-8 border-t border-background/20 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-8">
             <Link href="/" className="font-serif text-lg tracking-[0.3em] uppercase">
-              Awais Niaz
+              SN Collections
             </Link>
             <div className="flex items-center gap-4">
-              <a href="https://instagram.com" className="hover:opacity-60 transition-opacity" aria-label="Instagram">
-                <Instagram className="h-4 w-4 stroke-[1.5]" />
-              </a>
-              <a href="https://facebook.com" className="hover:opacity-60 transition-opacity" aria-label="Facebook">
-                <Facebook className="h-4 w-4 stroke-[1.5]" />
-              </a>
-              <a href="https://twitter.com" className="hover:opacity-60 transition-opacity" aria-label="Twitter">
-                <Twitter className="h-4 w-4 stroke-[1.5]" />
-              </a>
+              {socialLinks.map(({ href, label, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:opacity-60 transition-opacity"
+                  aria-label={label}
+                >
+                  <Icon className="h-4 w-4 stroke-[1.5]" />
+                </a>
+              ))}
             </div>
           </div>
 
@@ -141,7 +150,7 @@ export function PremiumFooter() {
             <Link href="/terms" className="hover:text-background/80 transition-colors">
               Terms of Service
             </Link>
-            <span>© 2026 Awais Niaz. All rights reserved.</span>
+            <span>© 2026 SN Collections. All rights reserved.</span>
           </div>
         </div>
       </div>

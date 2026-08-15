@@ -22,7 +22,7 @@ const contactInfo = [
   {
     icon: Mail,
     title: "Email",
-    lines: ["concierge@awaisniaz.com", "press@awaisniaz.com"],
+    lines: ["concierge@sncollections.com", "press@sncollections.com"],
   },
   {
     icon: Clock,

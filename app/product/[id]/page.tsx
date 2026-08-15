@@ -1,6 +1,6 @@
 "use client"
 
-import { use, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -11,21 +11,68 @@ import { SizeSelector } from "@/components/size-selector"
 import { ColorSelector } from "@/components/color-selector"
 import { ProductDetailsAccordion } from "@/components/product-details-accordion"
 import { RelatedProducts } from "@/components/related-products"
-import { getProductById, getRelatedProducts } from "@/lib/products"
+import { getProductById, getRelatedProducts, type Product } from "@/lib/products"
+import { getRelatedCatalogProducts, type CatalogProduct } from "@/lib/catalog"
 import { useCart } from "@/lib/cart-context"
 import { ChevronRight } from "lucide-react"
 
 export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
-  const product = getProductById(id)
+  const localProduct = getProductById(id)
 
-  if (!product) {
-    notFound()
-  }
+  const [catalog, setCatalog] = useState<CatalogProduct[] | null>(null)
+  const [isNotFound, setNotFound] = useState(false)
+
+  useEffect(() => {
+    if (localProduct) return
+    let cancelled = false
+    fetch("/api/products")
+      .then((res) => {
+        if (!res.ok) throw new Error("Request failed")
+        return res.json()
+      })
+      .then((data) => {
+        if (cancelled) return
+        const list: CatalogProduct[] = data?.products ?? []
+        setCatalog(list)
+        if (!list.some((p) => p.id === id)) setNotFound(true)
+      })
+      .catch(() => {
+        if (!cancelled) setNotFound(true)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [id, localProduct])
 
   const { addItem } = useCart()
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
+
+  if (isNotFound) {
+    notFound()
+  }
+
+  if (!localProduct && !catalog) {
+    return (
+      <main className="min-h-screen bg-background">
+        <Navigation />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="animate-pulse space-y-6 w-full max-w-4xl px-6">
+            <div className="aspect-[3/4] max-w-sm bg-muted" />
+            <div className="h-4 bg-muted w-2/3" />
+            <div className="h-8 bg-muted w-1/2" />
+          </div>
+        </div>
+        <PremiumFooter />
+      </main>
+    )
+  }
+
+  const product: Product | undefined = localProduct ?? catalog?.find((p) => p.id === id)
+  if (!product) {
+    notFound()
+  }
 
   const handleAddToBag = () => {
     const size = selectedSize || product.sizes.find((s) => s.available)?.size || ""
@@ -40,7 +87,11 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     })
   }
 
-  const relatedProducts = getRelatedProducts(id, 4)
+  const relatedProducts = localProduct
+    ? getRelatedProducts(id, 4)
+    : catalog
+      ? getRelatedCatalogProducts(catalog, id, 4)
+      : []
 
   const accordionItems = [
     {
@@ -71,7 +122,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     product.hoverImage,
     product.image.replace("query=", "query=detail "),
     product.hoverImage.replace("query=", "query=closeup "),
-  ]
+  ].filter(Boolean)
 
   return (
     <main className="min-h-screen bg-background">
@@ -88,7 +139,10 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
             Shop
           </Link>
           <ChevronRight className="w-3 h-3" />
-          <Link href={`/shop?category=${product.category}`} className="hover:text-foreground transition-colors">
+          <Link
+            href={`/shop?category=${encodeURIComponent(product.category)}`}
+            className="hover:text-foreground transition-colors"
+          >
             {product.category}
           </Link>
           <ChevronRight className="w-3 h-3" />
@@ -117,9 +171,14 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
           >
             {/* Header */}
             <div className="space-y-4">
-              <p className="text-xs tracking-widest text-muted-foreground uppercase">{product.category}</p>
+              <p className="text-xs tracking-widest text-muted-foreground uppercase">
+                {product.category}
+                {!(product as CatalogProduct).source || (product as CatalogProduct).source === "local"
+                  ? ""
+                  : ` · ${(product as CatalogProduct).source}`}
+              </p>
               <h1 className="font-serif text-3xl md:text-4xl">{product.name}</h1>
-              <p className="text-xl">€{product.price.toLocaleString()}</p>
+              <p className="text-xl">${product.price.toLocaleString()}</p>
             </div>
 
             {/* Description */}
@@ -150,7 +209,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
       </section>
 
       {/* Related Products */}
-      <RelatedProducts products={relatedProducts} />
+      {relatedProducts.length > 0 && <RelatedProducts products={relatedProducts} />}
 
       <PremiumFooter />
     </main>

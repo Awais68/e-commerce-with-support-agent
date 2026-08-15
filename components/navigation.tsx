@@ -3,20 +3,25 @@
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Search, ShoppingBag, Menu, X, User } from "lucide-react"
+import { Search, ShoppingBag, Menu, X, User, ChevronDown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { MiniCart } from "./mini-cart"
 import { useCart } from "@/lib/cart-context"
+import { catalogCategories } from "@/lib/catalog"
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [isCollectionsOpen, setIsCollectionsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const searchInputRef = useRef<HTMLInputElement>(null)
   const searchContainerRef = useRef<HTMLDivElement>(null)
+  const collectionsRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
   const { count, openCart } = useCart()
+
+  const shopCategories = catalogCategories.filter((c) => c !== "All")
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,21 +42,23 @@ export function Navigation() {
       if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
         setIsSearchOpen(false)
       }
+      if (collectionsRef.current && !collectionsRef.current.contains(e.target as Node)) {
+        setIsCollectionsOpen(false)
+      }
     }
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setIsSearchOpen(false)
+        setIsCollectionsOpen(false)
       }
     }
-    if (isSearchOpen) {
-      document.addEventListener("mousedown", handleClickOutside)
-      document.addEventListener("keydown", handleEscape)
-    }
+    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("keydown", handleEscape)
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
       document.removeEventListener("keydown", handleEscape)
     }
-  }, [isSearchOpen])
+  }, [])
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -85,7 +92,7 @@ export function Navigation() {
             </button>
 
             {/* Desktop navigation */}
-            <div className="hidden lg:flex items-center gap-12">
+            <div className="hidden lg:flex items-center gap-10">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
@@ -97,6 +104,54 @@ export function Navigation() {
                   {link.label}
                 </Link>
               ))}
+              {/* Collections dropdown */}
+              <div ref={collectionsRef} className="relative">
+                <button
+                  onClick={() => setIsCollectionsOpen((v) => !v)}
+                  aria-expanded={isCollectionsOpen}
+                  className={`flex items-center gap-1.5 text-sm tracking-[0.2em] uppercase transition-colors duration-500 ${
+                    isCollectionsOpen ? navItemColor : navItemHoverColor
+                  }`}
+                >
+                  Collections
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 transition-transform duration-300 ${
+                      isCollectionsOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                <AnimatePresence>
+                  {isCollectionsOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 8 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="absolute left-1/2 top-full mt-4 -translate-x-1/2 w-[440px] rounded-xl border border-border bg-background p-6 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.25)]"
+                    >
+                      <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+                        {shopCategories.map((category) => (
+                          <Link
+                            key={category}
+                            href={`/shop?category=${encodeURIComponent(category)}`}
+                            onClick={() => setIsCollectionsOpen(false)}
+                            className="text-sm text-foreground/70 transition-colors hover:text-foreground hover:underline underline-offset-4"
+                          >
+                            {category}
+                          </Link>
+                        ))}
+                      </div>
+                      <Link
+                        href="/shop"
+                        onClick={() => setIsCollectionsOpen(false)}
+                        className="mt-6 block border-t border-border pt-4 text-xs tracking-[0.2em] uppercase text-foreground"
+                      >
+                        Shop All Collections
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
 
             {/* Logo */}
@@ -104,7 +159,8 @@ export function Navigation() {
               href="/"
               className="absolute left-1/2 -translate-x-1/2 font-serif text-xl lg:text-2xl tracking-[0.3em] uppercase text-foreground"
             >
-              Awais Niaz
+              SN
+              <span className="mx-3 tracking-[0.45em]">Collections</span>
             </Link>
 
             {/* Right icons */}
@@ -189,7 +245,7 @@ export function Navigation() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: "-100%" }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="fixed inset-y-0 left-0 w-[280px] z-50 bg-background border-r border-border lg:hidden"
+              className="fixed inset-y-0 left-0 w-[300px] z-50 bg-background border-r border-border lg:hidden overflow-y-auto"
             >
               <div className="flex items-center justify-between h-16 px-6 border-b border-border">
                 <span className="font-serif text-lg tracking-[0.2em] uppercase">Menu</span>
@@ -210,6 +266,21 @@ export function Navigation() {
                     {link.label}
                   </Link>
                 ))}
+                <div className="border-t border-border pt-6 mt-2">
+                  <p className="text-xs text-muted-foreground tracking-[0.15em] uppercase mb-4">Collections</p>
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                    {shopCategories.map((category) => (
+                      <Link
+                        key={category}
+                        href={`/shop?category=${encodeURIComponent(category)}`}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="text-sm tracking-[0.1em] uppercase transition-colors text-foreground/60 hover:text-foreground"
+                      >
+                        {category}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
                 <div className="border-t border-border pt-6 mt-2">
                   <p className="text-xs text-muted-foreground tracking-[0.15em] uppercase mb-4">Account</p>
                   <Link

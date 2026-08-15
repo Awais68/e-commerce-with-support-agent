@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { Send, X, MessageCircle } from "lucide-react"
-import { WhatsAppIcon } from "./whatsapp-icon"
 import { whatsappUrl } from "@/lib/site-config"
 import { cn } from "@/lib/utils"
 
@@ -24,15 +23,15 @@ const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1]
 const WELCOME: ChatMessage = {
   id: 0,
   role: "agent",
-  text: "Welcome to Awais Niaz. I am your personal concierge — here around the clock for our luxury collection, orders, shipping, returns and care.\n\nHow may I assist you today?",
+  text: "Welcome to SN Collections. I am your personal concierge — here around the clock for our luxury collection, orders, shipping, returns and care.\n\nHow may I assist you today?",
   suggestions: ["What is your shipping policy?", "How do returns work?", "Show me the shoes", "Do you have a size guide?"],
   time: formatTime(new Date()),
 }
 
 function ConciergeMark({ className }: { className?: string }) {
   return (
-    <span className={cn("inline-flex shrink-0 items-center justify-center rounded-full bg-foreground text-background", className)}>
-      <span className="font-serif leading-none tracking-tight">AN</span>
+    <span className={cn("inline-flex shrink-0 items-center justify-center rounded-full bg-foreground text-background shadow-sm", className)}>
+      <span className="font-serif leading-none tracking-tight">SN</span>
     </span>
   )
 }
@@ -44,7 +43,7 @@ function TypingDots() {
       {[0, 1, 2].map((i) => (
         <motion.span
           key={i}
-          className="h-1.5 w-1.5 rounded-full bg-foreground/70"
+          className="h-1.5 w-1.5 rounded-full bg-foreground/60"
           animate={reduce ? undefined : { y: [0, -3, 0], opacity: [0.4, 1, 0.4] }}
           transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.15, ease: "easeInOut" }}
         />
@@ -113,7 +112,7 @@ export function SupportAgent() {
     } catch {
       appendMessage({
         role: "agent",
-        text: "I apologize — I am having trouble reaching my assistant right now. Please tap below to chat with our human concierge on WhatsApp, or try again in a moment.",
+        text: "I apologize — I am having trouble reaching my assistant right now. Please try again in a moment, or reach us on WhatsApp.",
         suggestions: ["Chat on WhatsApp"],
       })
     } finally {
@@ -121,9 +120,7 @@ export function SupportAgent() {
     }
   }
 
-  const rowTransition = reduce
-    ? { duration: 0 }
-    : { type: "tween" as const, duration: 0.3, ease: EASE }
+  const rowTransition = reduce ? { duration: 0 } : { type: "tween" as const, duration: 0.3, ease: EASE }
 
   return (
     <>
@@ -137,14 +134,14 @@ export function SupportAgent() {
         transition={{ type: "spring", stiffness: 320, damping: 26, delay: 0.3 }}
         whileHover={reduce ? undefined : { scale: 1.04, y: -2 }}
         whileTap={{ scale: 0.97 }}
-        className="group fixed bottom-6 right-6 z-50 grid h-12 w-12 place-items-center rounded-full bg-gradient-to-r from-[#1c1c1e] to-[#3a3a3f] text-background shadow-[0_14px_34px_-8px_rgba(0,0,0,0.45)] ring-1 ring-black/5"
+        className="group fixed bottom-6 right-6 z-50 grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-[#191919] via-[#262626] to-[#3a3a3f] text-background shadow-[0_16px_40px_-10px_rgba(0,0,0,0.55)] ring-1 ring-white/10"
       >
         {isOpen ? (
           <X className="h-5 w-5 stroke-[1.6]" />
         ) : (
           <>
             <MessageCircle className="h-5 w-5 stroke-[1.6]" />
-            <span className="absolute bottom-0 right-0 flex h-3 w-3" aria-hidden>
+            <span className="absolute bottom-1 right-1 flex h-3 w-3" aria-hidden>
               <span
                 className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 motion-safe:animate-ping"
                 style={{ animationDuration: "2s" }}
@@ -163,15 +160,20 @@ export function SupportAgent() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.97 }}
             transition={{ type: "tween", duration: 0.32, ease: EASE }}
-            className="fixed bottom-24 right-4 z-50 flex h-[min(74vh,600px)] w-[calc(100vw-2rem)] max-w-[400px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_28px_70px_-16px_rgba(0,0,0,0.35)] sm:right-6"
+            className="fixed bottom-24 right-4 z-50 flex h-[min(76vh,620px)] w-[calc(100vw-2rem)] max-w-[400px] flex-col overflow-hidden rounded-[20px] border border-black/10 bg-white shadow-[0_32px_80px_-20px_rgba(0,0,0,0.45)] sm:right-6"
           >
             {/* Header */}
-            <div className="bg-foreground px-5 pb-4 pt-5 text-background">
-              <div className="flex items-center gap-3">
-                <ConciergeMark className="h-10 w-10 text-[13px] ring-2 ring-background/15" />
+            <div className="relative overflow-hidden bg-foreground px-5 pb-5 pt-6 text-background">
+              <div
+                aria-hidden
+                className="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-background/[0.07]"
+              />
+              <div aria-hidden className="absolute -bottom-20 -left-10 h-36 w-36 rounded-full bg-background/[0.05]" />
+              <div className="relative flex items-center gap-3">
+                <ConciergeMark className="h-11 w-11 text-[15px] ring-2 ring-background/15" />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline gap-2">
-                    <p className="truncate font-serif text-[16px] leading-none tracking-wide">Awais Niaz</p>
+                    <p className="truncate font-serif text-[17px] leading-none tracking-wide">SN Collections</p>
                     <span className="hidden text-[9px] uppercase tracking-[0.24em] text-background/60 sm:inline">
                       Concierge
                     </span>
@@ -199,7 +201,11 @@ export function SupportAgent() {
             </div>
 
             {/* Messages */}
-            <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto bg-[#F5F4F1] px-4 py-5">
+            <div
+              ref={scrollRef}
+              data-lenis-prevent
+              className="flex-1 space-y-4 overflow-y-auto overscroll-contain bg-[#F6F4F0] px-4 py-5"
+            >
               {messages.map((m) => (
                 <motion.div
                   key={m.id}
@@ -212,17 +218,17 @@ export function SupportAgent() {
                   <div className={cn("max-w-[82%]", m.role === "user" && "flex flex-col items-end")}>
                     <div
                       className={cn(
-                        "rounded-[3px] px-4 py-3 text-[13.5px] leading-relaxed",
+                        "rounded-2xl px-4 py-3 text-[13.5px] leading-relaxed shadow-sm",
                         m.role === "user"
-                          ? "bg-foreground text-background"
-                          : "border border-black/[0.06] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
+                          ? "rounded-br-md bg-foreground text-background"
+                          : "rounded-bl-md border border-black/[0.05] bg-white text-foreground"
                       )}
                     >
                       <p className="whitespace-pre-wrap">{m.text}</p>
                     </div>
                     <span
                       className={cn(
-                        "mt-1 block text-[10px] tracking-wide text-neutral-500",
+                        "mt-1 block text-[10px] tracking-wide text-neutral-400",
                         m.role === "user" && "mr-1"
                       )}
                     >
@@ -234,7 +240,7 @@ export function SupportAgent() {
                           <button
                             key={s}
                             onClick={() => sendMessage(s)}
-                            className="rounded-full border border-foreground/15 bg-white px-3.5 py-2 text-xs text-foreground transition-colors duration-200 hover:border-foreground hover:bg-foreground hover:text-background"
+                            className="rounded-full border border-foreground/10 bg-white px-3.5 py-2 text-xs text-foreground transition-colors duration-200 hover:border-foreground hover:bg-foreground hover:text-background"
                           >
                             {s}
                           </button>
@@ -252,23 +258,12 @@ export function SupportAgent() {
                   className="flex items-end gap-2.5"
                 >
                   <ConciergeMark className="h-7 w-7 text-[10px]" />
-                  <div className="rounded-[3px] border border-black/[0.06] bg-white px-4 py-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+                  <div className="rounded-2xl rounded-bl-md border border-black/[0.05] bg-white px-4 py-3.5 shadow-sm">
                     <TypingDots />
                   </div>
                 </motion.div>
               )}
             </div>
-
-            {/* Escalation */}
-            <a
-              href={whatsappUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center justify-center gap-2 border-t border-black/[0.06] bg-white py-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-500 transition-colors duration-200 hover:text-foreground"
-            >
-              <WhatsAppIcon className="h-3.5 w-3.5 text-[#1FAF5A] transition-transform duration-200 group-hover:scale-110" />
-              Chat with a human concierge
-            </a>
 
             {/* Input */}
             <div className="flex items-center gap-2.5 border-t border-black/[0.06] bg-white px-4 py-3.5">
@@ -281,7 +276,7 @@ export function SupportAgent() {
                 }}
                 placeholder="Type your message…"
                 aria-label="Message"
-                className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-neutral-500"
+                className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-neutral-400"
               />
               <button
                 onClick={() => sendMessage(input)}

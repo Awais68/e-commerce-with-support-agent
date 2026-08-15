@@ -12,25 +12,25 @@ const timeline = [
     year: "1847",
     title: "The Beginning",
     description:
-      "Awais Niaz established our first atelier in Florence, crafting bespoke leather goods for Italian nobility. His vision was simple: create pieces that transcend time.",
+      "SN Collections established our first atelier in Florence, crafting bespoke leather goods for Italian nobility. His vision was simple: create pieces that transcend time.",
   },
   {
     year: "1892",
     title: "Royal Appointment",
     description:
-      "Recognized for exceptional craftsmanship, the House of Awais Niaz received its first royal warrant, establishing a tradition of serving discerning clientele across Europe.",
+      "Recognized for exceptional craftsmanship, the House of SN Collections received its first royal warrant, establishing a tradition of serving discerning clientele across Europe.",
   },
   {
     year: "1935",
     title: "The Signature Stitch",
     description:
-      "Third-generation artisan Marco Niaz perfected our distinctive hand-stitching technique, now recognized worldwide as the hallmark of authentic Awais Niaz pieces.",
+      "Third-generation artisan Marco Niaz perfected our distinctive hand-stitching technique, now recognized worldwide as the hallmark of authentic SN Collections pieces.",
   },
   {
     year: "1978",
     title: "Global Expansion",
     description:
-      "While maintaining our Florence atelier as the heart of production, Awais Niaz opened boutiques in Paris, Milan, and New York, sharing Italian excellence with the world.",
+      "While maintaining our Florence atelier as the heart of production, SN Collections opened boutiques in Paris, Milan, and New York, sharing Italian excellence with the world.",
   },
   {
     year: "2024",
@@ -294,7 +294,7 @@ export default function HeritagePage() {
             </p>
             <cite className="not-italic">
               <span className="block text-sm tracking-[0.2em] uppercase text-muted-foreground">
-                — Awais Niaz, Creative Director
+                — SN Collections, Creative Director
               </span>
             </cite>
           </motion.blockquote>

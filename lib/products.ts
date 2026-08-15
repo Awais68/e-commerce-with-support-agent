@@ -43,7 +43,7 @@ export const products: Product[] = [
     details: [
       "Hand-stitched lapels",
       "Interior pocket with silk trim",
-      "Custom Awais Niaz hardware",
+      "Custom SN Collections hardware",
       "Numbered authenticity tag",
     ],
     madeIn: "Florence, Italy",
@@ -84,7 +84,7 @@ export const products: Product[] = [
     hoverImage: "/navy-wool-tailored-blazer-open-luxury-fashion.jpg",
     description: "The foundation of modern elegance",
     longDescription:
-      "Cut from Super 150s wool sourced from the finest Australian merino sheep, this blazer exemplifies Awais Niaz's commitment to exceptional quality. The half-canvas construction allows for a natural drape while maintaining structure. Each blazer requires over 30 hours of handwork to complete.",
+      "Cut from Super 150s wool sourced from the finest Australian merino sheep, this blazer exemplifies SN Collections's commitment to exceptional quality. The half-canvas construction allows for a natural drape while maintaining structure. Each blazer requires over 30 hours of handwork to complete.",
     materials: ["100% Super 150s Merino Wool", "Bemberg cupro lining", "Horn buttons"],
     care: ["Dry clean only", "Steam to refresh", "Store with cedar blocks"],
     sizes: [
@@ -154,7 +154,7 @@ export const products: Product[] = [
       { name: "Dark Brown", hex: "#3E2723", available: true },
       { name: "Black", hex: "#0A0A0A", available: true },
     ],
-    details: ["3.5cm width", "Single-prong buckle", "Burnished edges", "Embossed Awais Niaz logo"],
+    details: ["3.5cm width", "Single-prong buckle", "Burnished edges", "Embossed SN Collections logo"],
     madeIn: "Florence, Italy",
   },
   {
@@ -178,7 +178,7 @@ export const products: Product[] = [
       { name: "Geometric", hex: "#708090", available: true },
       { name: "Botanical", hex: "#228B22", available: true },
     ],
-    details: ["12-color screen print", "Hand-rolled hem", "90x90cm dimensions", "Signature Awais Niaz motif"],
+    details: ["12-color screen print", "Hand-rolled hem", "90x90cm dimensions", "Signature SN Collections motif"],
     madeIn: "Como, Italy",
   },
   {
@@ -217,7 +217,7 @@ export const products: Product[] = [
     hoverImage: "/placeholder.svg?height=800&width=600",
     description: "Architectural precision meets artisanal craft",
     longDescription:
-      "This handbag represents the culmination of Awais Niaz's leather expertise. Each bag is constructed from a single hide, carefully selected for consistency of grain and texture. The architectural silhouette is achieved through meticulous internal construction, while the exterior remains elegantly minimal.",
+      "This handbag represents the culmination of SN Collections's leather expertise. Each bag is constructed from a single hide, carefully selected for consistency of grain and texture. The architectural silhouette is achieved through meticulous internal construction, while the exterior remains elegantly minimal.",
     materials: ["Full-grain calfskin leather", "Suede interior lining", "Brass hardware with palladium finish"],
     care: ["Store in dust bag", "Condition bi-annually", "Avoid rain exposure"],
     sizes: [
@@ -230,7 +230,7 @@ export const products: Product[] = [
       { name: "Burgundy", hex: "#722F37", available: true },
       { name: "Tan", hex: "#D2B48C", available: true },
     ],
-    details: ["Single-hide construction", "Interior zip pocket", "Detachable shoulder strap", "Signature Awais Niaz clasp"],
+    details: ["Single-hide construction", "Interior zip pocket", "Detachable shoulder strap", "Signature SN Collections clasp"],
     madeIn: "Florence, Italy",
   },
   {
@@ -506,6 +506,8 @@ export const products: Product[] = [
 
 export const categories = [
   "All",
+  "Men",
+  "Women",
   "Outerwear",
   "Dresses",
   "Knitwear",

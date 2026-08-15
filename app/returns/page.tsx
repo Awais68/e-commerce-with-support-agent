@@ -9,7 +9,7 @@ import { PremiumFooter } from "@/components/premium-footer"
 const policySections = [
   {
     title: "Our Promise",
-    body: "Every Awais Niaz piece is crafted with care and inspected before dispatch. If you are not entirely satisfied, we offer a straightforward returns policy so you can shop with complete confidence.",
+    body: "Every SN Collections piece is crafted with care and inspected before dispatch. If you are not entirely satisfied, we offer a straightforward returns policy so you can shop with complete confidence.",
   },
   {
     title: "Return Window",
