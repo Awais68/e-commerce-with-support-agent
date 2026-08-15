@@ -137,29 +137,22 @@ export function SupportAgent() {
         transition={{ type: "spring", stiffness: 320, damping: 26, delay: 0.3 }}
         whileHover={reduce ? undefined : { scale: 1.04, y: -2 }}
         whileTap={{ scale: 0.97 }}
-        className="group fixed bottom-6 left-6 z-50 flex h-14 items-center gap-2.5 rounded-full bg-foreground pl-3 pr-5 text-background shadow-[0_14px_34px_-8px_rgba(0,0,0,0.45)]"
+        className="group fixed bottom-6 right-6 z-50 grid h-12 w-12 place-items-center rounded-full bg-gradient-to-r from-[#1c1c1e] to-[#3a3a3f] text-background shadow-[0_14px_34px_-8px_rgba(0,0,0,0.45)] ring-1 ring-black/5"
       >
-        <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-background/10">
-          {isOpen ? (
-            <X className="relative h-[18px] w-[18px] stroke-[1.6]" />
-          ) : (
-            <>
+        {isOpen ? (
+          <X className="h-5 w-5 stroke-[1.6]" />
+        ) : (
+          <>
+            <MessageCircle className="h-5 w-5 stroke-[1.6]" />
+            <span className="absolute bottom-0 right-0 flex h-3 w-3" aria-hidden>
               <span
-                aria-hidden
-                className="absolute inset-0 rounded-full bg-background/10 motion-safe:animate-ping"
-                style={{ animationDuration: "2.6s" }}
+                className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 motion-safe:animate-ping"
+                style={{ animationDuration: "2s" }}
               />
-              <MessageCircle className="relative h-[18px] w-[18px] stroke-[1.6]" />
-            </>
-          )}
-        </span>
-        <span className="flex flex-col items-start leading-tight">
-          <span className="text-[13px] font-semibold tracking-wide">{isOpen ? "Close" : "Concierge"}</span>
-          <span className="flex items-center gap-1.5 text-[10px] tracking-wide text-background/60">
-            <span className={cn("h-1 w-1 rounded-full", isOpen ? "bg-background/40" : "bg-emerald-400")} />
-            {isOpen ? "Chat open" : "Online · instant"}
-          </span>
-        </span>
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-white" />
+            </span>
+          </>
+        )}
       </motion.button>
 
       {/* Panel */}
@@ -170,7 +163,7 @@ export function SupportAgent() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.97 }}
             transition={{ type: "tween", duration: 0.32, ease: EASE }}
-            className="fixed bottom-24 left-4 z-50 flex h-[min(74vh,600px)] w-[calc(100vw-2rem)] max-w-[400px] flex-col overflow-hidden border border-black/10 bg-white shadow-[0_28px_70px_-16px_rgba(0,0,0,0.35)] sm:left-6"
+            className="fixed bottom-24 right-4 z-50 flex h-[min(74vh,600px)] w-[calc(100vw-2rem)] max-w-[400px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_28px_70px_-16px_rgba(0,0,0,0.35)] sm:right-6"
           >
             {/* Header */}
             <div className="bg-foreground px-5 pb-4 pt-5 text-background">
