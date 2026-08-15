@@ -27,10 +27,6 @@ export function Navigation() {
   }, [])
 
   useEffect(() => {
-    setIsMenuOpen(false)
-  }, [pathname])
-
-  useEffect(() => {
     if (isSearchOpen && searchInputRef.current) {
       searchInputRef.current.focus()
     }
@@ -206,6 +202,7 @@ export function Navigation() {
                   <Link
                     key={link.href}
                     href={link.href}
+                    onClick={() => setIsMenuOpen(false)}
                     className={`text-lg tracking-[0.15em] uppercase transition-colors ${
                       pathname === link.href ? "text-foreground" : "text-foreground/60 hover:text-foreground"
                     }`}
@@ -217,12 +214,14 @@ export function Navigation() {
                   <p className="text-xs text-muted-foreground tracking-[0.15em] uppercase mb-4">Account</p>
                   <Link
                     href="/account/profile"
+                    onClick={() => setIsMenuOpen(false)}
                     className="block text-lg tracking-[0.15em] uppercase transition-colors text-foreground/60 hover:text-foreground mb-4"
                   >
                     Profile
                   </Link>
                   <Link
                     href="/account/orders"
+                    onClick={() => setIsMenuOpen(false)}
                     className="block text-lg tracking-[0.15em] uppercase transition-colors text-foreground/60 hover:text-foreground"
                   >
                     Orders

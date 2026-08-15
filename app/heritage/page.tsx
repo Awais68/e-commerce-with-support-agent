@@ -289,8 +289,8 @@ export default function HeritagePage() {
             transition={{ duration: 0.8 }}
           >
             <p className="font-serif text-2xl lg:text-4xl leading-relaxed mb-8 text-balance">
-              "True luxury is not about ostentation. It is about the quiet confidence that comes from knowing every
-              detail has been considered, every stitch placed with intention."
+              &ldquo;True luxury is not about ostentation. It is about the quiet confidence that comes from knowing every
+              detail has been considered, every stitch placed with intention.&rdquo;
             </p>
             <cite className="not-italic">
               <span className="block text-sm tracking-[0.2em] uppercase text-muted-foreground">
