@@ -5,6 +5,9 @@ export type CatalogSource = "local" | "fakestore" | "kolz"
 export interface CatalogProduct extends Product {
   source: CatalogSource
   sourceId: string
+  stockHint?: number
+  quantity?: number
+  inStock?: boolean
 }
 
 export const catalogCategories = [
@@ -74,6 +77,7 @@ function baseExternal(input: {
   longDescription: string
   source: CatalogSource
   sourceId: string
+  stockHint?: number
 }): CatalogProduct {
   return {
     id: input.id,
@@ -94,6 +98,7 @@ function baseExternal(input: {
     madeIn: "Imported",
     source: input.source,
     sourceId: input.sourceId,
+    stockHint: input.stockHint,
   }
 }
 
@@ -126,6 +131,7 @@ function normalizeFakeStore(items: RawFakeStore[]): CatalogProduct[] {
       longDescription: item.description,
       source: "fakestore",
       sourceId: String(item.id),
+      stockHint: item.rating?.count ?? 0,
     })
   )
 }
@@ -163,12 +169,14 @@ function normalizeKolz(items: RawKolz[]): CatalogProduct[] {
       longDescription: item.description || `${name} — curated for the SN Collections catalogue.`,
       source: "kolz",
       sourceId: String(item.id),
+      stockHint: item.rating?.count ?? 0,
     })
   })
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
+async function fetchJson<T>(url: string, force = false): Promise<T> {
   const res = await fetch(url, {
+    cache: force ? "no-store" : undefined,
     next: { revalidate: 3600 },
     signal: AbortSignal.timeout(12000),
   })
@@ -176,11 +184,12 @@ async function fetchJson<T>(url: string): Promise<T> {
   return res.json()
 }
 
-export async function fetchExternalProducts(): Promise<CatalogProduct[]> {
+export async function fetchExternalProducts(force = false): Promise<CatalogProduct[]> {
   const [fake, kolz] = await Promise.allSettled([
-    fetchJson<RawFakeStore[]>("https://fakestoreapi.com/products").then(normalizeFakeStore),
+    fetchJson<RawFakeStore[]>("https://fakestoreapi.com/products", force).then(normalizeFakeStore),
     fetchJson<RawKolz[]>(
-      "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/products.json"
+      "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/products.json",
+      force
     ).then(normalizeKolz),
   ])
 
@@ -193,12 +202,12 @@ export async function fetchExternalProducts(): Promise<CatalogProduct[]> {
 const EXTERNAL_TTL = 60 * 60 * 1000
 let externalCache: { products: CatalogProduct[]; fetchedAt: number } | null = null
 
-async function getExternalCached(): Promise<CatalogProduct[]> {
+async function getExternalCached(force = false): Promise<CatalogProduct[]> {
   const now = Date.now()
-  if (externalCache && now - externalCache.fetchedAt < EXTERNAL_TTL) {
+  if (!force && externalCache && now - externalCache.fetchedAt < EXTERNAL_TTL) {
     return externalCache.products
   }
-  const products = await fetchExternalProducts()
+  const products = await fetchExternalProducts(force)
   externalCache = { products, fetchedAt: now }
   return products
 }

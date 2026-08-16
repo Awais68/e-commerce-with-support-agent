@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { getCatalogProductById } from "@/lib/catalog"
+import { getStoreProductById } from "@/lib/store"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic"
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const product = await getCatalogProductById(id)
+    const product = await getStoreProductById(id)
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 })
     }

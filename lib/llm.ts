@@ -1,4 +1,5 @@
 import { searchKnowledgeBase } from "./knowledge-base"
+import { ragSearch, ragContextToString, isRagConfigured } from "./rag"
 
 export interface LLMResponse {
   reply: string
@@ -11,11 +12,22 @@ export async function generateLLMResponse(query: string): Promise<LLMResponse | 
   const apiKey = process.env.GROQ_API_KEY
   if (!apiKey) return null
 
-  const results = searchKnowledgeBase(query, 4)
-  const context =
-    results.length > 0
-      ? results.map((r, i) => `## ${i + 1}. ${r.entry.title}\n${r.entry.answer}`).join("\n\n")
-      : "(No matching knowledge base entries found.)"
+  let context = ""
+
+  if (isRagConfigured()) {
+    const rag = await ragSearch(query, 5)
+    if (rag && (rag.kb.length > 0 || rag.products.length > 0)) {
+      context = ragContextToString(rag)
+    }
+  }
+
+  if (!context) {
+    const results = searchKnowledgeBase(query, 4)
+    context =
+      results.length > 0
+        ? results.map((r, i) => `## ${i + 1}. ${r.entry.title}\n${r.entry.answer}`).join("\n\n")
+        : "(No matching knowledge base entries found.)"
+  }
 
   try {
     const controller = new AbortController()
