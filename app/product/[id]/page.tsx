@@ -55,7 +55,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
 
   if (!localProduct && !catalog) {
     return (
-      <main className="min-h-screen bg-background">
+      <main className="min-h-screen">
         <Navigation />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="animate-pulse space-y-6 w-full max-w-4xl px-6">
@@ -125,7 +125,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   ].filter(Boolean)
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen">
       <Navigation />
 
       {/* Breadcrumb */}

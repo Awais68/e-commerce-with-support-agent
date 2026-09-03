@@ -84,7 +84,7 @@ const craftsmen = [
 
 export default function HeritagePage() {
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen">
       <Navigation />
 
       {/* Hero Section - converted to Next.js Image with priority */}

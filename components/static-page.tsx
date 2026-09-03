@@ -14,7 +14,7 @@ export function StaticPage({
   children: ReactNode
 }) {
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen">
       <Navigation />
       <section className="relative h-[45vh] lg:h-[55vh] flex items-center justify-center overflow-hidden bg-foreground">
         <div className="absolute inset-0 bg-gradient-to-b from-foreground to-foreground/95" />

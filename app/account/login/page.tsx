@@ -44,7 +44,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <header className="border-b border-border">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 py-6">
           <Link href="/" className="font-serif text-xl lg:text-2xl tracking-[0.3em] uppercase">

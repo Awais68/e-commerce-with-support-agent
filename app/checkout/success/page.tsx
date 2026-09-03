@@ -123,7 +123,7 @@ function SuccessContent() {
 
 export default function CheckoutSuccessPage() {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center">
       <Suspense fallback={null}>
         <SuccessContent />
       </Suspense>

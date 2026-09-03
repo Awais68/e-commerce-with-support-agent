@@ -7,6 +7,7 @@ import { CartProvider } from "@/lib/cart-context"
 import { SupportAgent } from "@/components/support-agent"
 import { WhatsAppButton } from "@/components/whatsapp-button"
 import { Toaster } from "@/components/ui/sonner"
+import { GlobalBackground } from "@/components/global-background"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <body className={`font-sans antialiased`}>
+        <GlobalBackground />
         <SmoothScrollProvider>
           <CartProvider>{children}</CartProvider>
           <SupportAgent />

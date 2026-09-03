@@ -37,7 +37,7 @@ export default function SettingsPage() {
   return (
     <>
       <Navigation />
-      <main className="min-h-screen bg-background pt-24 lg:pt-32">
+      <main className="min-h-screen pt-24 lg:pt-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 pb-20">
           {/* Page header */}
           <motion.div

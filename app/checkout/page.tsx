@@ -188,7 +188,7 @@ function CheckoutContent() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <header className="border-b border-border">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">

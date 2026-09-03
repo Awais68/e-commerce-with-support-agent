@@ -85,7 +85,7 @@ export default function OrdersPage() {
     return (
       <>
         <Navigation />
-        <main className="min-h-screen bg-background pt-24 lg:pt-32 flex items-center justify-center">
+        <main className="min-h-screen pt-24 lg:pt-32 flex items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </main>
       </>
@@ -95,7 +95,7 @@ export default function OrdersPage() {
   return (
     <>
       <Navigation />
-      <main className="min-h-screen bg-background pt-24 lg:pt-32">
+      <main className="min-h-screen pt-24 lg:pt-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 pb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
