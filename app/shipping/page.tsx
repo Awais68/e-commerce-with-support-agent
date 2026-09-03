@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 const sections = [
   {
     title: "Standard Delivery",
-    body: "Orders are dispatched from Florence within 24–48 hours and arrive in 3–5 business days. Shipping is complimentary on all orders over $500 and fully tracked to your door.",
+    body: "Orders are dispatched from Florence within 24–48 hours and arrive in 3–5 business days. Shipping is complimentary on all orders over Rs. 150 and fully tracked to your door.",
   },
   {
     title: "Express Delivery",
@@ -21,7 +21,7 @@ const sections = [
   },
   {
     title: "Signature Required",
-    body: "Orders over $1,000 require a signature on delivery. You can request a safe-place drop or reschedule delivery via your courier tracking once your order ships.",
+    body: "Orders over Rs. 200 require a signature on delivery. You can request a safe-place drop or reschedule delivery via your courier tracking once your order ships.",
   },
 ]
 

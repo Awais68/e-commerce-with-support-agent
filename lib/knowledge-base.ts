@@ -29,7 +29,7 @@ export const knowledgeBase: KnowledgeEntry[] = [
     title: "Shipping",
     keywords: ["shipping", "ship", "delivery", "deliver", "dispatch", "send", "courier", "dhl", "fedex", "postage"],
     answer:
-      "We ship worldwide from Florence, Italy. Orders are dispatched within 24–48 hours. Standard delivery arrives in 3–5 business days, and express delivery in 1–2 business days. Shipping is complimentary on all orders over $500. Signature required on delivery for orders over $1,000.",
+      "We ship worldwide from Florence, Italy. Orders are dispatched within 24–48 hours. Standard delivery arrives in 3–5 business days, and express delivery in 1–2 business days. Shipping is complimentary on all orders over Rs. 150. Signature required on delivery for orders over Rs. 200.",
     suggestions: ["Where do you ship?", "How fast is express delivery?", "What about returns?"],
   },
   {
@@ -156,7 +156,7 @@ function productEntries(): KnowledgeEntry[] {
       p.category.toLowerCase(),
       ...p.materials.map((m) => m.toLowerCase()),
     ],
-    answer: `${p.name} — ${p.price.toLocaleString()} USD. ${p.description}. Crafted from ${p.materials.join(
+    answer: `${p.name} — ${p.price.toLocaleString()} PKR. ${p.description}. Crafted from ${p.materials.join(
       ", "
     )} and made in ${p.madeIn}. ${
       p.sizes.some((s) => s.available)
@@ -183,7 +183,7 @@ function categoryEntries(): KnowledgeEntry[] {
         answer:
           items.length > 0
             ? `In our ${c} collection we currently offer: ${items
-                .map((p) => `${p.name} at ${p.price.toLocaleString()} USD`)
+                .map((p) => `${p.name} at ${p.price.toLocaleString()} PKR`)
                 .join(", ")}. Would you like more details on any of these pieces?`
             : `Our ${c} collection features a curated selection of pieces sourced from our partner houses. You can browse the full ${c} edit in the Collections menu on the website.`,
         suggestions: items.length > 0 ? items.slice(0, 3).map((p) => `Tell me about the ${p.name}`) : DEFAULT_SUGGESTIONS,

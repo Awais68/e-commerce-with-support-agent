@@ -3,7 +3,7 @@ import { getStoreCatalog, getStoreCatalogByCategory } from "@/lib/store"
 import { catalogCategories } from "@/lib/catalog"
 
 export const runtime = "nodejs"
-export const dynamic = "force-dynamic"
+export const revalidate = 300
 
 export async function GET(request: NextRequest) {
   try {

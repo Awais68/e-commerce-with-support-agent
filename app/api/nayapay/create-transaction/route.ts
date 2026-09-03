@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getNayapayConfig, isNayapayConfigured, nayapayHeaders, generateOrderReference } from "@/lib/payments"
+import { createOrder, type OrderItemInput, type ShippingInput } from "@/lib/orders"
 
 export const runtime = "nodejs"
 
@@ -16,14 +17,33 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
+    const items = Array.isArray(body?.items) ? (body.items as OrderItemInput[]) : []
+    const shipping = body?.shipping as ShippingInput | undefined
+    const userId = body?.userId || null
     const amount = Number(body?.amount)
     if (!amount || amount <= 0) {
       return NextResponse.json({ error: "Invalid order amount." }, { status: 400 })
+    }
+    if (items.length === 0) {
+      return NextResponse.json({ error: "Your bag is empty." }, { status: 400 })
     }
 
     const config = getNayapayConfig()
     const origin = request.nextUrl.origin
     const reference = generateOrderReference()
+
+    const order = await createOrder({
+      items,
+      shipping,
+      userId,
+      provider: "nayapay",
+      reference,
+      currency: "PKR",
+      status: "pending",
+    })
+    if (!order) {
+      return NextResponse.json({ error: "Could not create your order." }, { status: 500 })
+    }
 
     const payload = {
       amount,
@@ -31,7 +51,7 @@ export async function POST(request: NextRequest) {
       description: `SN Collections order ${reference}`,
       ...(config.currency ? { currency: config.currency } : {}),
       return_urls: {
-        success: `${origin}/checkout/success?provider=nayapay`,
+        success: `${origin}/checkout/success?provider=nayapay&reference=${reference}`,
         failure: `${origin}/checkout?payment=failed`,
         cancel: `${origin}/checkout?payment=cancelled`,
       },
@@ -62,6 +82,14 @@ export async function POST(request: NextRequest) {
         { error: "NayaPay did not return a checkout token. Please check your NayaPay credentials." },
         { status: 502 }
       )
+    }
+
+    if (transactionId) {
+      await fetch(`${origin}/api/internal/order-transaction`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reference, providerTransactionId: String(transactionId) }),
+      }).catch(() => {})
     }
 
     const checkoutUrl = `${config.checkoutUrl}?token=${encodeURIComponent(token)}`

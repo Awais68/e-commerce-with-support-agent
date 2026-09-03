@@ -75,7 +75,7 @@ export function ProductCard({ id, name, price, image, hoverImage, category, inde
         <Link href={`/product/${id}`} className="block space-y-1">
           <p className="text-xs tracking-[0.15em] uppercase text-muted-foreground">{category}</p>
           <h3 className="font-serif text-lg group-hover:underline underline-offset-4 transition-all">{name}</h3>
-          <p className="text-sm text-muted-foreground tracking-wide">Starting at ${price.toLocaleString()}</p>
+          <p className="text-sm text-muted-foreground tracking-wide">Starting at Rs. {price.toLocaleString()}</p>
         </Link>
       </div>
     </motion.div>

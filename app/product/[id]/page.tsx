@@ -178,7 +178,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                   : ` · ${(product as CatalogProduct).source}`}
               </p>
               <h1 className="font-serif text-3xl md:text-4xl">{product.name}</h1>
-              <p className="text-xl">${product.price.toLocaleString()}</p>
+              <p className="text-xl">Rs. {product.price.toLocaleString()}</p>
             </div>
 
             {/* Description */}

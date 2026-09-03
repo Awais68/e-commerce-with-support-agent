@@ -2,8 +2,10 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { User, Package, MapPin, Settings, LogOut } from "lucide-react"
+import { User, Package, MapPin, Settings, LogOut, ContactRound, UserRound } from "lucide-react"
 import { motion } from "framer-motion"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { useAuth } from "@/lib/use-auth"
 
 const accountLinks = [
   { href: "/account/profile", label: "Profile", icon: User },
@@ -14,9 +16,30 @@ const accountLinks = [
 
 export function AccountSidebar() {
   const pathname = usePathname()
+  const { user, logout } = useAuth()
+  const GenderIcon = user?.gender === "female" ? ContactRound : UserRound
 
   return (
     <aside className="w-full lg:w-64 flex-shrink-0">
+      {user && (
+        <div className="flex items-center gap-4 px-4 py-4 mb-6 border border-border">
+          <Avatar className="h-12 w-12 border border-border">
+            {user.avatar ? (
+              <AvatarImage src={user.avatar} alt={user.firstName} />
+            ) : (
+              <AvatarFallback className="text-muted-foreground">
+                <GenderIcon className="h-5 w-5" />
+              </AvatarFallback>
+            )}
+          </Avatar>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium">
+              {[user.firstName, user.lastName].filter(Boolean).join(" ") || "SN Customer"}
+            </p>
+            <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+          </div>
+        </div>
+      )}
       <nav className="space-y-1">
         {accountLinks.map((link) => {
           const isActive = pathname === link.href
@@ -40,7 +63,10 @@ export function AccountSidebar() {
             </Link>
           )
         })}
-        <button className="flex items-center gap-3 px-4 py-3 text-sm tracking-wide text-muted-foreground hover:text-foreground transition-colors w-full">
+        <button
+          onClick={logout}
+          className="flex items-center gap-3 px-4 py-3 text-sm tracking-wide text-muted-foreground hover:text-foreground transition-colors w-full"
+        >
           <LogOut className="h-4 w-4 stroke-[1.5]" />
           Sign Out
         </button>

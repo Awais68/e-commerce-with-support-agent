@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { Instagram, Facebook, Linkedin } from "lucide-react"
+import { FooterCanvas } from "./footer-canvas"
 
 const socialLinks = [
   { href: "https://www.instagram.com/awaisshaikh0002/", label: "Instagram", Icon: Instagram },
@@ -35,8 +36,9 @@ export function PremiumFooter() {
   }
 
   return (
-    <footer className="bg-foreground text-background">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-24">
+    <footer className="relative overflow-hidden bg-foreground text-background">
+      <FooterCanvas />
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-24">
         {/* Main footer content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
           {/* Newsletter */}

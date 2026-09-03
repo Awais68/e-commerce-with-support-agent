@@ -98,7 +98,7 @@ export function MiniCart() {
                         Remove
                       </button>
                     </div>
-                    <div className="text-sm">${item.price.toLocaleString()}</div>
+                    <div className="text-sm">Rs. {item.price.toLocaleString()}</div>
                   </motion.div>
                 ))}
               </div>
@@ -108,7 +108,7 @@ export function MiniCart() {
             <div className="border-t border-border p-6 space-y-4">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>${subtotal.toLocaleString()}</span>
+                <span>Rs. {subtotal.toLocaleString()}</span>
               </div>
               <p className="text-xs text-muted-foreground">Shipping and taxes calculated at checkout</p>
               <Link href="/checkout" onClick={closeCart}>

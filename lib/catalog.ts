@@ -36,6 +36,12 @@ export const catalogCategories = [
 const DEFAULT_SIZE = "One Size"
 const DEFAULT_COLORS: Product["colors"] = []
 
+const PKR_PER_USD = 280
+
+function usdToPkr(usd: number): number {
+  return Math.round(usd * PKR_PER_USD)
+}
+
 interface RawFakeStore {
   id: number
   title: string
@@ -123,7 +129,7 @@ function normalizeFakeStore(items: RawFakeStore[]): CatalogProduct[] {
     baseExternal({
       id: `fs-${item.id}`,
       name: item.title,
-      price: item.price,
+      price: usdToPkr(item.price),
       category: mapFakeStoreCategory(item.category),
       image: item.image,
       hoverImage: item.image,
@@ -156,7 +162,7 @@ function mapKolzCategory(category: string, subCategory: string): string {
 function normalizeKolz(items: RawKolz[]): CatalogProduct[] {
   return items.map((item) => {
     const name = item.name || "SN Collections Product"
-    const price = item.priceCents != null ? item.priceCents / 100 : 0
+    const price = item.priceCents != null ? usdToPkr(item.priceCents / 100) : 0
     const category = mapKolzCategory(item.category || "", item.subCategory || "")
     return baseExternal({
       id: `kolz-${item.id}`,

@@ -1,14 +1,39 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Navigation } from "@/components/navigation"
 import { PremiumFooter } from "@/components/premium-footer"
 import { AccountSidebar } from "@/components/account-sidebar"
+import { useAuth } from "@/lib/use-auth"
 
 export default function SettingsPage() {
+  const router = useRouter()
+  const { logout } = useAuth()
+
+  const handleDeleteAccount = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to permanently delete your account? This cannot be undone."
+    )
+    if (!confirmed) return
+    const res = await fetch("/api/account/profile", { method: "DELETE" })
+    if (res.ok) {
+      toast.success("Account deleted")
+      router.push("/")
+      router.refresh()
+    } else {
+      toast.error("Could not delete your account.")
+    }
+  }
+
+  const handleSignOut = async () => {
+    await logout()
+    toast.success("Signed out")
+  }
   return (
     <>
       <Navigation />
@@ -105,11 +130,15 @@ export default function SettingsPage() {
                   <div className="space-y-6">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4">
                       <div>
-                        <Label className="text-sm font-medium">Download Your Data</Label>
-                        <p className="text-xs text-muted-foreground mt-1">Request a copy of all your personal data</p>
+                        <Label className="text-sm font-medium">Sign Out</Label>
+                        <p className="text-xs text-muted-foreground mt-1">End your current session</p>
                       </div>
-                      <Button variant="outline" className="text-sm tracking-[0.1em] uppercase bg-transparent">
-                        Request Data
+                      <Button
+                        onClick={handleSignOut}
+                        variant="outline"
+                        className="text-sm tracking-[0.1em] uppercase bg-transparent"
+                      >
+                        Sign Out
                       </Button>
                     </div>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4">
@@ -120,6 +149,7 @@ export default function SettingsPage() {
                         </p>
                       </div>
                       <Button
+                        onClick={handleDeleteAccount}
                         variant="outline"
                         className="text-sm tracking-[0.1em] uppercase text-red-600 border-red-600/30 hover:bg-red-600/10 hover:text-red-600 bg-transparent"
                       >

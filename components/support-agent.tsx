@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
-import { Send, X, MessageCircle } from "lucide-react"
+import { Bot, Send, X } from "lucide-react"
 import { whatsappUrl } from "@/lib/site-config"
 import { cn } from "@/lib/utils"
 
@@ -23,15 +23,21 @@ const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1]
 const WELCOME: ChatMessage = {
   id: 0,
   role: "agent",
-  text: "Welcome to SN Collections. I am your personal concierge — here around the clock for our luxury collection, orders, shipping, returns and care.\n\nHow may I assist you today?",
-  suggestions: ["What is your shipping policy?", "How do returns work?", "Show me the shoes", "Do you have a size guide?"],
+  text: "Welcome to SN Collections. I am your AI assistant — trained on our live orders, payments, inventory, stock arrivals and dispatch.\n\nAsk me about an order, a delivery, stock, prices or anything else. How may I assist you today?",
+  suggestions: ["Where is my order?", "What stock is available?", "Which couriers do you use?", "What just arrived in stock?"],
   time: formatTime(new Date()),
 }
 
-function ConciergeMark({ className }: { className?: string }) {
+function RobotAvatar({ className }: { className?: string }) {
   return (
-    <span className={cn("inline-flex shrink-0 items-center justify-center rounded-full bg-foreground text-background shadow-sm", className)}>
-      <span className="font-serif leading-none tracking-tight">SN</span>
+    <span
+      className={cn(
+        "inline-flex shrink-0 items-center justify-center rounded-full bg-foreground text-background shadow-sm ring-1 ring-black/10",
+        className
+      )}
+      aria-hidden
+    >
+      <Bot className="h-1/2 w-1/2 stroke-[1.8]" />
     </span>
   )
 }
@@ -128,25 +134,25 @@ export function SupportAgent() {
       <motion.button
         onClick={() => setIsOpen((v) => !v)}
         aria-expanded={isOpen}
-        aria-label={isOpen ? "Close concierge chat" : "Open concierge chat"}
+        aria-label={isOpen ? "Close AI assistant chat" : "Open AI assistant chat"}
         initial={reduce ? false : { opacity: 0, y: 18, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ type: "spring", stiffness: 320, damping: 26, delay: 0.3 }}
         whileHover={reduce ? undefined : { scale: 1.04, y: -2 }}
         whileTap={{ scale: 0.97 }}
-        className="group fixed bottom-6 right-6 z-50 grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-[#191919] via-[#262626] to-[#3a3a3f] text-background shadow-[0_16px_40px_-10px_rgba(0,0,0,0.55)] ring-1 ring-white/10"
+        className="group fixed bottom-6 right-6 z-50 grid h-14 w-14 place-items-center rounded-full bg-foreground text-background shadow-[0_16px_40px_-10px_rgba(0,0,0,0.6)] ring-1 ring-white/20"
       >
         {isOpen ? (
           <X className="h-5 w-5 stroke-[1.6]" />
         ) : (
           <>
-            <MessageCircle className="h-5 w-5 stroke-[1.6]" />
+            <Bot className="h-5 w-5 stroke-[1.6]" />
             <span className="absolute bottom-1 right-1 flex h-3 w-3" aria-hidden>
               <span
-                className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 motion-safe:animate-ping"
+                className="absolute inline-flex h-full w-full rounded-full bg-foreground opacity-40 motion-safe:animate-ping"
                 style={{ animationDuration: "2s" }}
               />
-              <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-white" />
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-background ring-1 ring-foreground/30" />
             </span>
           </>
         )}
@@ -170,24 +176,24 @@ export function SupportAgent() {
               />
               <div aria-hidden className="absolute -bottom-20 -left-10 h-36 w-36 rounded-full bg-background/[0.05]" />
               <div className="relative flex items-center gap-3">
-                <ConciergeMark className="h-11 w-11 text-[15px] ring-2 ring-background/15" />
+                <RobotAvatar className="h-11 w-11" />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline gap-2">
-                    <p className="truncate font-serif text-[17px] leading-none tracking-wide">SN Collections</p>
+                    <p className="truncate font-serif text-[17px] leading-none tracking-wide">SN AI Assistant</p>
                     <span className="hidden text-[9px] uppercase tracking-[0.24em] text-background/60 sm:inline">
-                      Concierge
+                      Live Data
                     </span>
                   </div>
                   <p className="mt-2 flex items-center gap-1.5 text-[10px] uppercase tracking-[0.18em] text-background/60">
                     <span className="relative flex h-1.5 w-1.5">
                       <span
                         aria-hidden
-                        className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-70 motion-safe:animate-ping"
+                        className="absolute inline-flex h-full w-full rounded-full bg-background/70 opacity-70 motion-safe:animate-ping"
                         style={{ animationDuration: "2.2s" }}
                       />
-                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-background/80" />
                     </span>
-                    Online · replies instantly
+                    Online · answers instantly
                   </p>
                 </div>
                 <button
@@ -214,7 +220,7 @@ export function SupportAgent() {
                   transition={rowTransition}
                   className={cn("flex items-end gap-2.5", m.role === "user" && "justify-end")}
                 >
-                  {m.role === "agent" && <ConciergeMark className="h-7 w-7 text-[10px]" />}
+                  {m.role === "agent" && <RobotAvatar className="h-7 w-7" />}
                   <div className={cn("max-w-[82%]", m.role === "user" && "flex flex-col items-end")}>
                     <div
                       className={cn(
@@ -257,7 +263,7 @@ export function SupportAgent() {
                   transition={rowTransition}
                   className="flex items-end gap-2.5"
                 >
-                  <ConciergeMark className="h-7 w-7 text-[10px]" />
+                  <RobotAvatar className="h-7 w-7" />
                   <div className="rounded-2xl rounded-bl-md border border-black/[0.05] bg-white px-4 py-3.5 shadow-sm">
                     <TypingDots />
                   </div>

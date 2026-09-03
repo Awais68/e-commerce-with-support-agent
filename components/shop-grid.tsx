@@ -140,7 +140,7 @@ export function ShopGrid({ products }: ShopGridProps) {
                       {product.name}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      ${product.price.toFixed(2)}
+                      Rs. {product.price.toLocaleString()}
                       {product.source !== "local" && (
                         <span className="ml-2 text-[10px] uppercase tracking-widest text-muted-foreground/60">
                           {product.source}

@@ -6,6 +6,7 @@ import { SmoothScrollProvider } from "@/components/smooth-scroll-provider"
 import { CartProvider } from "@/lib/cart-context"
 import { SupportAgent } from "@/components/support-agent"
 import { WhatsAppButton } from "@/components/whatsapp-button"
+import { Toaster } from "@/components/ui/sonner"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -34,6 +35,7 @@ export default function RootLayout({
           <SupportAgent />
           <WhatsAppButton />
         </SmoothScrollProvider>
+        <Toaster />
       </body>
     </html>
   )

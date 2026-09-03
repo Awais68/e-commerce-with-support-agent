@@ -19,7 +19,7 @@ export const products: Product[] = [
   {
     id: "silk-evening-coat",
     name: "Silk Evening Coat",
-    price: 2450,
+    price: 200,
     category: "Outerwear",
     image: "/elegant-black-silk-evening-coat-luxury-fashion.jpg",
     hoverImage: "/elegant-black-silk-evening-coat-back-view-luxury.jpg",
@@ -51,7 +51,7 @@ export const products: Product[] = [
   {
     id: "cashmere-wrap-dress",
     name: "Cashmere Wrap Dress",
-    price: 1890,
+    price: 180,
     category: "Dresses",
     image: "/cream-cashmere-wrap-dress-elegant-luxury-fashion.jpg",
     hoverImage: "/cream-cashmere-wrap-dress-side-view-luxury.jpg",
@@ -78,7 +78,7 @@ export const products: Product[] = [
   {
     id: "tailored-wool-blazer",
     name: "Tailored Wool Blazer",
-    price: 1650,
+    price: 170,
     category: "Outerwear",
     image: "/navy-wool-tailored-blazer-luxury-menswear-fashion.jpg",
     hoverImage: "/navy-wool-tailored-blazer-open-luxury-fashion.jpg",
@@ -105,7 +105,7 @@ export const products: Product[] = [
   {
     id: "merino-turtleneck",
     name: "Merino Turtleneck",
-    price: 485,
+    price: 120,
     category: "Knitwear",
     image: "/charcoal-merino-wool-turtleneck-sweater-luxury-min.jpg",
     hoverImage: "/charcoal-merino-turtleneck-detail-texture-luxury.jpg",
@@ -133,7 +133,7 @@ export const products: Product[] = [
   {
     id: "leather-belt",
     name: "Artisan Leather Belt",
-    price: 320,
+    price: 110,
     category: "Accessories",
     image: "/brown-leather-belt-gold-buckle-luxury-accessory-mi.jpg",
     hoverImage: "/brown-leather-belt-detail-stitching-luxury.jpg",
@@ -160,7 +160,7 @@ export const products: Product[] = [
   {
     id: "silk-scarf",
     name: "Silk Twill Scarf",
-    price: 295,
+    price: 105,
     category: "Accessories",
     image: "/silk-scarf-abstract-pattern-luxury-accessory-elega.jpg",
     hoverImage: "/silk-scarf-draped-luxury-fashion-accessory.jpg",
@@ -184,7 +184,7 @@ export const products: Product[] = [
   {
     id: "linen-trousers",
     name: "Relaxed Linen Trousers",
-    price: 580,
+    price: 140,
     category: "Trousers",
     image: "/beige-linen-trousers-relaxed-fit-luxury-fashion.jpg",
     hoverImage: "/beige-linen-trousers-detail-pocket-luxury.jpg",
@@ -211,7 +211,7 @@ export const products: Product[] = [
   {
     id: "structured-handbag",
     name: "Structured Leather Handbag",
-    price: 1890,
+    price: 190,
     category: "Accessories",
     image: "/black-structured-leather-handbag-luxury-minimal-de.jpg",
     hoverImage: "/placeholder.svg?height=800&width=600",
@@ -236,7 +236,7 @@ export const products: Product[] = [
   {
     id: "baby-cotton-onesie",
     name: "Baby Cotton Onesie",
-    price: 65,
+    price: 100,
     category: "Baby",
     image: "/baby-cotton-onesie.jpg",
     hoverImage: "/baby-cotton-onesie-hover.jpg",
@@ -263,7 +263,7 @@ export const products: Product[] = [
   {
     id: "baby-knit-romper",
     name: "Baby Knit Romper",
-    price: 85,
+    price: 100,
     category: "Baby",
     image: "/baby-knit-romper.jpg",
     hoverImage: "/baby-knit-romper-hover.jpg",
@@ -290,7 +290,7 @@ export const products: Product[] = [
   {
     id: "girls-floral-dress",
     name: "Girls Floral Party Dress",
-    price: 145,
+    price: 150,
     category: "Girls",
     image: "/girls-floral-dress.jpg",
     hoverImage: "/girls-floral-dress-hover.jpg",
@@ -316,7 +316,7 @@ export const products: Product[] = [
   {
     id: "girls-knit-cardigan",
     name: "Girls Knit Cardigan",
-    price: 120,
+    price: 125,
     category: "Girls",
     image: "/girls-knit-cardigan.jpg",
     hoverImage: "/girls-knit-cardigan-hover.jpg",
@@ -343,7 +343,7 @@ export const products: Product[] = [
   {
     id: "mens-wool-overcoat",
     name: "Men's Wool Overcoat",
-    price: 1980,
+    price: 200,
     category: "Men Winter",
     image: "/mens-wool-overcoat.jpg",
     hoverImage: "/mens-wool-overcoat-hover.jpg",
@@ -370,7 +370,7 @@ export const products: Product[] = [
   {
     id: "mens-cashmere-sweater",
     name: "Men's Cashmere Sweater",
-    price: 720,
+    price: 160,
     category: "Men Winter",
     image: "/mens-cashmere-sweater.jpg",
     hoverImage: "/mens-cashmere-sweater-hover.jpg",
@@ -397,7 +397,7 @@ export const products: Product[] = [
   {
     id: "mens-linen-shirt",
     name: "Men's Linen Shirt",
-    price: 320,
+    price: 130,
     category: "Men Summer",
     image: "/mens-linen-shirt.jpg",
     hoverImage: "/mens-linen-shirt-hover.jpg",
@@ -424,7 +424,7 @@ export const products: Product[] = [
   {
     id: "womens-satin-heels",
     name: "Women's Satin Heels",
-    price: 540,
+    price: 155,
     category: "Shoes",
     image: "/womens-satin-heels.jpg",
     hoverImage: "/womens-satin-heels-hover.jpg",
@@ -451,7 +451,7 @@ export const products: Product[] = [
   {
     id: "mens-leather-oxfords",
     name: "Men's Leather Oxfords",
-    price: 680,
+    price: 165,
     category: "Shoes",
     image: "/mens-leather-oxfords.jpg",
     hoverImage: "/mens-leather-oxfords-hover.jpg",
@@ -478,7 +478,7 @@ export const products: Product[] = [
   {
     id: "baby-leather-booties",
     name: "Baby Leather Booties",
-    price: 55,
+    price: 100,
     category: "Shoes",
     image: "/baby-leather-booties.jpg",
     hoverImage: "/baby-leather-booties-hover.jpg",

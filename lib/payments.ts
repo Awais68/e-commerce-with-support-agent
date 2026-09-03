@@ -40,3 +40,29 @@ export function nayapayHeaders(config: ReturnType<typeof getNayapayConfig>) {
 export function generateOrderReference() {
   return `SN-${Date.now().toString(36).toUpperCase()}`
 }
+
+/**
+ * Resolves the public base URL for redirect/callback URLs.
+ * Prefers NEXT_PUBLIC_SITE_URL so proxied/deployed environments build correct URLs.
+ */
+export function getBaseUrl(fallbackOrigin: string): string {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim()
+  return (configured || fallbackOrigin).replace(/\/+$/, "")
+}
+
+/**
+ * Stripe rejects relative paths in `product_data.images` with "Not a valid URL".
+ * Turns a local path like "/coat.jpg" into an absolute URL, and drops anything
+ * that is not http(s) (data URIs, blob URLs, empty values).
+ */
+export function toAbsoluteImageUrl(image: string | undefined, baseUrl: string): string | null {
+  const raw = image?.trim()
+  if (!raw) return null
+  if (/^https?:\/\//i.test(raw)) return raw
+  if (!raw.startsWith("/")) return null
+  try {
+    return new URL(raw, `${baseUrl}/`).toString()
+  } catch {
+    return null
+  }
+}
