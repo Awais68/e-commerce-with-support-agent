@@ -199,6 +199,15 @@ export async function getUserOrders(userId: string): Promise<Order[]> {
   return rows.map(mapOrder)
 }
 
+export async function getOrdersByEmail(email: string, limit = 5): Promise<Order[]> {
+  const rows = await dbQuery<OrderRow>(
+    `SELECT * FROM sn_orders WHERE lower(email) = lower($1) ORDER BY created_at DESC LIMIT $2`,
+    [email.trim(), limit]
+  )
+  if (!rows) return []
+  return rows.map(mapOrder)
+}
+
 export async function setOrderUserId(reference: string, userId: string): Promise<void> {
   await dbQuery(`UPDATE sn_orders SET user_id = $2 WHERE reference = $1`, [reference, userId])
 }
@@ -215,4 +224,132 @@ export async function setOrderProviderTransaction(reference: string, providerTra
     `UPDATE sn_orders SET provider_transaction_id = $2, updated_at = now() WHERE reference = $1`,
     [reference, providerTransactionId]
   )
+}
+/* ------------------------------------------------------------------ *
+ * Cash on Delivery + shipment tracking
+ * ------------------------------------------------------------------ */
+
+export interface ShipmentEventRecord {
+  status: string
+  at: string
+  note?: string
+}
+
+export interface ShipmentRecord {
+  orderRef: string
+  courier: string
+  trackingNo: string
+  status: string
+  eta: string
+  timeline: ShipmentEventRecord[]
+}
+
+interface ShipmentRow {
+  order_ref: string
+  courier: string
+  tracking_no: string
+  status: string
+  eta: string
+  timeline: ShipmentEventRecord[]
+}
+
+function mapShipment(row: ShipmentRow): ShipmentRecord {
+  return {
+    orderRef: row.order_ref,
+    courier: row.courier,
+    trackingNo: row.tracking_no,
+    status: row.status,
+    eta: row.eta,
+    timeline: Array.isArray(row.timeline) ? row.timeline : [],
+  }
+}
+
+export function nowStamp(): string {
+  return new Date().toISOString().slice(0, 16).replace("T", " ")
+}
+
+export function etaFromNow(days: number): string {
+  const d = new Date()
+  d.setDate(d.getDate() + days)
+  return d.toISOString().slice(0, 10)
+}
+
+export async function createShipment(input: {
+  orderId?: string | null
+  orderRef: string
+  courier: string
+  trackingNo?: string
+  status?: string
+  eta?: string
+  timeline?: ShipmentEventRecord[]
+}): Promise<ShipmentRecord | null> {
+  await ensureSchema()
+  const rows = await dbQuery<ShipmentRow>(
+    `INSERT INTO sn_shipments (id, order_id, order_ref, courier, tracking_no, status, eta, timeline)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8::jsonb)
+     RETURNING *`,
+    [
+      randomUUID(),
+      input.orderId ?? null,
+      input.orderRef,
+      input.courier,
+      input.trackingNo ?? "",
+      input.status ?? "Order confirmed",
+      input.eta ?? "",
+      JSON.stringify(input.timeline ?? []),
+    ]
+  )
+  if (!rows || rows.length === 0) return null
+  return mapShipment(rows[0])
+}
+
+export async function getShipmentByOrderRef(reference: string): Promise<ShipmentRecord | null> {
+  const rows = await dbQuery<ShipmentRow>(
+    `SELECT * FROM sn_shipments WHERE order_ref = $1 ORDER BY created_at DESC LIMIT 1`,
+    [reference]
+  )
+  if (!rows || rows.length === 0) return null
+  return mapShipment(rows[0])
+}
+
+/**
+ * Pushes one event onto the shipment timeline and promotes it to the current
+ * status. Done in SQL so two concurrent updates cannot clobber each other's
+ * events the way a read-modify-write in JS would.
+ */
+export async function addShipmentEvent(
+  reference: string,
+  event: ShipmentEventRecord,
+  update: { courier?: string; trackingNo?: string; eta?: string } = {}
+): Promise<ShipmentRecord | null> {
+  const rows = await dbQuery<ShipmentRow>(
+    `UPDATE sn_shipments
+     SET status = $2,
+         courier = COALESCE(NULLIF($3, ''), courier),
+         tracking_no = COALESCE(NULLIF($4, ''), tracking_no),
+         eta = COALESCE(NULLIF($5, ''), eta),
+         timeline = timeline || $6::jsonb,
+         updated_at = now()
+     WHERE order_ref = $1
+     RETURNING *`,
+    [
+      reference,
+      event.status,
+      update.courier ?? "",
+      update.trackingNo ?? "",
+      update.eta ?? "",
+      JSON.stringify([{ ...event, at: event.at || nowStamp() }]),
+    ]
+  )
+  if (!rows || rows.length === 0) return null
+  return mapShipment(rows[0])
+}
+
+export async function setOrderStatus(reference: string, status: string): Promise<Order | null> {
+  const rows = await dbQuery<OrderRow>(
+    `UPDATE sn_orders SET status = $2, updated_at = now() WHERE reference = $1 RETURNING *`,
+    [reference, status]
+  )
+  if (!rows || rows.length === 0) return null
+  return mapOrder(rows[0])
 }

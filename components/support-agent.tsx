@@ -1,16 +1,34 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import Image from "next/image"
+import Link from "next/link"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
-import { Bot, Send, X } from "lucide-react"
+import { Bot, Send, X, ZoomIn } from "lucide-react"
 import { whatsappUrl } from "@/lib/site-config"
 import { cn } from "@/lib/utils"
+
+interface ChatProduct {
+  id: string
+  name: string
+  price: number
+  category: string
+  image: string
+  hoverImage: string
+  description: string
+  longDescription: string
+  materials: string[]
+  sizes: { size: string; available: boolean }[]
+  colors: { name: string; hex: string; available: boolean }[]
+  madeIn: string
+}
 
 interface ChatMessage {
   id: number
   role: "agent" | "user"
   text: string
   suggestions?: string[]
+  products?: ChatProduct[]
   time?: string
 }
 
@@ -24,7 +42,7 @@ const WELCOME: ChatMessage = {
   id: 0,
   role: "agent",
   text: "Welcome to SN Collections. I am your AI assistant — trained on our live orders, payments, inventory, stock arrivals and dispatch.\n\nAsk me about an order, a delivery, stock, prices or anything else. How may I assist you today?",
-  suggestions: ["Where is my order?", "What stock is available?", "Which couriers do you use?", "What just arrived in stock?"],
+  suggestions: ["Where is my order?", "Do you offer Cash on Delivery?", "What stock is available?", "Which couriers do you use?"],
   time: formatTime(new Date()),
 }
 
@@ -64,6 +82,7 @@ export function SupportAgent() {
   const [messages, setMessages] = useState<ChatMessage[]>([WELCOME])
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
+  const [lightboxProduct, setLightboxProduct] = useState<ChatProduct | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const idRef = useRef(1)
@@ -83,11 +102,13 @@ export function SupportAgent() {
   useEffect(() => {
     if (!isOpen) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsOpen(false)
+      if (e.key !== "Escape") return
+      if (lightboxProduct) setLightboxProduct(null)
+      else setIsOpen(false)
     }
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
-  }, [isOpen])
+  }, [isOpen, lightboxProduct])
 
   const appendMessage = (message: Omit<ChatMessage, "id">) => {
     setMessages((prev) => [...prev, { ...message, id: idRef.current++, time: formatTime(new Date()) }])
@@ -107,14 +128,14 @@ export function SupportAgent() {
     setIsTyping(true)
 
     try {
-      const res = await fetch("/api/support", {
+      const res = await fetch("/api/support/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: trimmed }),
       })
       if (!res.ok) throw new Error("Request failed")
       const data = await res.json()
-      appendMessage({ role: "agent", text: data.reply, suggestions: data.suggestions })
+      appendMessage({ role: "agent", text: data.reply, suggestions: data.suggestions, products: data.products })
     } catch {
       appendMessage({
         role: "agent",
@@ -232,6 +253,49 @@ export function SupportAgent() {
                     >
                       <p className="whitespace-pre-wrap">{m.text}</p>
                     </div>
+
+                    {m.role === "agent" && m.products && m.products.length > 0 && (
+                      <div className="mt-2.5 flex flex-col gap-2.5">
+                        {m.products.map((p) => (
+                          <div
+                            key={p.id}
+                            className="flex gap-3 overflow-hidden rounded-2xl border border-black/[0.06] bg-white p-2.5 shadow-sm"
+                          >
+                            <button
+                              type="button"
+                              onClick={() => setLightboxProduct(p)}
+                              aria-label={`View larger image of ${p.name}`}
+                              className="group/img relative h-20 w-16 shrink-0 overflow-hidden rounded-xl bg-muted"
+                            >
+                              <Image
+                                src={p.image || "/placeholder.svg"}
+                                alt={p.name}
+                                fill
+                                sizes="64px"
+                                className="object-cover"
+                              />
+                              <span className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-200 group-hover/img:bg-black/30 group-hover/img:opacity-100">
+                                <ZoomIn className="h-4 w-4 text-white" />
+                              </span>
+                            </button>
+                            <div className="min-w-0 flex-1 py-0.5">
+                              <p className="truncate text-[10px] uppercase tracking-widest text-muted-foreground">
+                                {p.category}
+                              </p>
+                              <p className="truncate font-serif text-[13.5px] leading-tight">{p.name}</p>
+                              <p className="mt-0.5 text-xs text-muted-foreground">Rs. {p.price.toLocaleString()}</p>
+                              <Link
+                                href={`/product/${p.id}`}
+                                className="mt-1 inline-block text-[11px] uppercase tracking-wide underline underline-offset-2"
+                              >
+                                View full details
+                              </Link>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
                     <span
                       className={cn(
                         "mt-1 block text-[10px] tracking-wide text-neutral-400",
@@ -293,6 +357,68 @@ export function SupportAgent() {
                 <Send className="h-4 w-4 -translate-x-px" />
               </button>
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Image lightbox */}
+      <AnimatePresence>
+        {lightboxProduct && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 p-6 backdrop-blur-sm"
+            onClick={() => setLightboxProduct(null)}
+          >
+            <motion.div
+              initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.94 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={reduce ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.94 }}
+              transition={{ type: "spring", stiffness: 300, damping: 28 }}
+              onClick={(e) => e.stopPropagation()}
+              className={cn(
+                "relative w-full max-w-sm overflow-hidden rounded-[28px] bg-white p-3",
+                "shadow-[16px_16px_40px_rgba(0,0,0,0.35),-8px_-8px_24px_rgba(255,255,255,0.06)]"
+              )}
+            >
+              <button
+                onClick={() => setLightboxProduct(null)}
+                aria-label="Close image preview"
+                className="absolute right-5 top-5 z-10 grid h-9 w-9 place-items-center rounded-full bg-black/40 text-white backdrop-blur transition-colors hover:bg-black/60"
+              >
+                <X className="h-[18px] w-[18px] stroke-[1.6]" />
+              </button>
+
+              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[20px] bg-muted">
+                <Image
+                  src={lightboxProduct.image || "/placeholder.svg"}
+                  alt={lightboxProduct.name}
+                  fill
+                  sizes="(max-width: 640px) 90vw, 384px"
+                  className="object-cover"
+                  priority
+                />
+              </div>
+
+              <div className="px-2 pb-2 pt-4">
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                  {lightboxProduct.category}
+                </p>
+                <h3 className="font-serif text-lg leading-tight">{lightboxProduct.name}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">Rs. {lightboxProduct.price.toLocaleString()}</p>
+                <p className="mt-2 line-clamp-3 text-[13px] leading-relaxed text-neutral-600">
+                  {lightboxProduct.longDescription || lightboxProduct.description}
+                </p>
+                <Link
+                  href={`/product/${lightboxProduct.id}`}
+                  className="mt-3 inline-flex items-center text-xs uppercase tracking-widest underline underline-offset-4"
+                >
+                  View full details
+                </Link>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

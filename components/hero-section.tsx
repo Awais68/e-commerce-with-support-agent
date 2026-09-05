@@ -8,6 +8,7 @@ import useEmblaCarousel from "embla-carousel-react"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ParticleCanvas } from "@/components/particle-canvas"
 
 const slides = [
   {
@@ -71,12 +72,13 @@ export function HeroSection() {
   return (
     <section className="relative min-h-screen flex">
       {/* Left content - 22% */}
-      <div className="hidden lg:flex bg-foreground items-center justify-center w-[22%]">
+      <div className="hidden lg:flex relative overflow-hidden bg-foreground items-center justify-center w-[22%]">
+        <ParticleCanvas color="#c9a35f" count={70} size={0.09} opacity={0.6} />
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.5 }}
-          className="text-background -rotate-90 whitespace-nowrap"
+          className="relative z-10 text-background -rotate-90 whitespace-nowrap"
         >
           <span className="text-xs tracking-[0.3em] uppercase">SN Collections · Florence</span>
         </motion.div>
@@ -102,6 +104,9 @@ export function HeroSection() {
             ))}
           </div>
         </div>
+
+        {/* Ambient particle animation */}
+        <ParticleCanvas color="#f2dfb3" count={140} size={0.11} opacity={0.75} className="z-[5]" />
 
         {/* Content overlay */}
         <div className="relative z-10 h-full flex flex-col justify-end p-8 lg:p-16 pb-24 lg:pb-32">

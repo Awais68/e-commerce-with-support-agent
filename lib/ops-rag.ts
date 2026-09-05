@@ -14,6 +14,23 @@ export interface OpsResult {
 const REF_RE = /\bSN-[A-Z0-9]{6,}\b/i
 const TRACKING_RE = /\b(?:TCS|DHL|LP|FEDEX)[-\s]?[A-Z0-9-]{6,}\b/i
 
+const PAYMENT_LABEL: Record<string, string> = {
+  cod: "Cash on Delivery",
+  stripe: "Card (Stripe)",
+  nayapay: "NayaPay",
+}
+
+const ORDER_STATUS_LABEL: Record<string, string> = {
+  pending: "Awaiting payment",
+  confirmed: "Confirmed (Cash on Delivery)",
+  paid: "Paid",
+  dispatched: "Dispatched",
+  out_for_delivery: "Out for delivery",
+  delivered: "Delivered",
+  cancelled: "Cancelled",
+  refunded: "Refunded",
+}
+
 function formatMoney(n: number): string {
   return `PKR ${Math.round(n).toLocaleString()}`
 }
@@ -44,18 +61,29 @@ async function lookupOrderByReference(ref: string): Promise<string | null> {
     )
     if (order && order[0]) {
       const o = order[0]
-      let text = `Order ${o.reference} — status: ${o.status}.`
+      const isCod = String(o.provider) === "cod"
+      const status = String(o.status)
+      let text = `Order ${o.reference} — status: ${ORDER_STATUS_LABEL[status] ?? status}.`
       if (o.created_at) text += `\nPlaced on ${o.created_at}`
-      if (o.provider) text += `\nPayment provider: ${o.provider}${o.provider_transaction_id ? ` (txn ${o.provider_transaction_id})` : ""}`
+      text += `\nPayment method: ${PAYMENT_LABEL[String(o.provider)] ?? o.provider}${o.provider_transaction_id ? ` (txn ${o.provider_transaction_id})` : ""}`
       if (o.total) text += `\nTotal: ${o.currency ?? "PKR"} ${o.total}`
+      // COD money is only settled once the rider hands it in.
+      if (isCod && status !== "paid" && status !== "delivered" && status !== "cancelled") {
+        text += `\nCash payable on delivery: ${o.currency ?? "PKR"} ${o.total} — keep the cash ready, the courier calls before arriving.`
+      } else if (isCod) {
+        text += `\nCash on Delivery amount has been collected.`
+      }
       if (ship && ship[0]) {
         const s = ship[0]
-        text += `\nCourier: ${s.courier}, Tracking: ${s.tracking_no}, Status: ${s.status}, ETA: ${s.eta}`
-        const timeline = Array.isArray(s.timeline) ? (s.timeline as { status: string; at?: string }[]) : []
+        text += `\nCourier: ${s.courier}, Tracking: ${s.tracking_no || "assigned at dispatch"}, Shipment status: ${s.status}, ETA: ${s.eta}`
+        const timeline = Array.isArray(s.timeline) ? (s.timeline as { status: string; at?: string; note?: string }[]) : []
         if (timeline.length > 0) {
-          text += `\nTimeline:\n` + timeline.map((e) => `- ${e.status}${e.at ? ` on ${e.at}` : ""}`).join("\n")
+          text += `\nTimeline:\n` + timeline.map((e) => `- ${e.status}${e.at ? ` on ${e.at}` : ""}${e.note ? ` (${e.note})` : ""}`).join("\n")
         }
+      } else {
+        text += `\nShipment: not dispatched yet — it is being prepared at our atelier.`
       }
+      text += `\nFull tracking page: /track?reference=${o.reference}`
       return text
     }
   }
@@ -177,6 +205,15 @@ export async function resolveOpsQuestion(query: string): Promise<OpsResult> {
   if (wantsOrder) {
     const res = await lookupOrderByReference(q)
     if (res) return { intent: "order", context: res, answer: res, confidence: "medium" }
+    // No usable reference in the message — asking for it beats guessing.
+    return {
+      intent: "order-lookup",
+      context:
+        "The customer is asking about an order but did not give an order number. Order numbers look like SN-XXXXXXX and are on the confirmation email and the checkout success page. Orders can also be tracked at /track. Ask the customer to share the order number.",
+      answer:
+        "Happy to check that for you. Please share your order number — it looks like SN-XXXXXXX and is on your confirmation email or your checkout page. You can also track it any time at /track.",
+      confidence: "high",
+    }
   }
 
   return { intent: "none", context: "", confidence: "none" }

@@ -127,3 +127,64 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes bg-pan {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes blob-drift-1 {
+  0%, 100% {
+    transform: translate(-5%, -8%) scale(1);
+  }
+  50% {
+    transform: translate(10%, 12%) scale(1.15);
+  }
+}
+
+@keyframes blob-drift-2 {
+  0%, 100% {
+    transform: translate(8%, 6%) scale(1.1);
+  }
+  50% {
+    transform: translate(-12%, -10%) scale(0.95);
+  }
+}
+
+@keyframes blob-drift-3 {
+  0%, 100% {
+    transform: translate(0%, 10%) scale(0.95);
+  }
+  50% {
+    transform: translate(-8%, -14%) scale(1.2);
+  }
+}
+
+.animate-bg-pan {
+  animation: bg-pan 18s ease-in-out infinite;
+}
+.animate-blob-drift-1 {
+  animation: blob-drift-1 22s ease-in-out infinite;
+}
+.animate-blob-drift-2 {
+  animation: blob-drift-2 26s ease-in-out infinite;
+}
+.animate-blob-drift-3 {
+  animation: blob-drift-3 20s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-bg-pan,
+  .animate-blob-drift-1,
+  .animate-blob-drift-2,
+  .animate-blob-drift-3 {
+    animation: none !important;
+  }
+}

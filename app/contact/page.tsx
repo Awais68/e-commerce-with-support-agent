@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from "react"
 import { motion } from "framer-motion"
 import { Mail, MapPin, Phone, Clock } from "lucide-react"
 import { Navigation } from "@/components/navigation"
 import { PremiumFooter } from "@/components/premium-footer"
 import { WhatsAppIcon } from "@/components/whatsapp-icon"
 import { whatsappUrl } from "@/lib/site-config"
+import { TicketForm } from "@/components/ticket-form"
 
 const contactInfo = [
   {
@@ -32,14 +32,6 @@ const contactInfo = [
 ]
 
 export default function ContactPage() {
-  const [form, setForm] = useState({ name: "", email: "", subject: "General Enquiry", message: "" })
-  const [submitted, setSubmitted] = useState(false)
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setSubmitted(true)
-  }
-
   return (
     <main className="min-h-screen">
       <Navigation />
@@ -110,89 +102,11 @@ export default function ContactPage() {
               <span className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-4 block">Send a Message</span>
               <h2 className="font-serif text-3xl lg:text-4xl mb-8">Write to Us</h2>
 
-              {submitted ? (
-                <div className="border border-border bg-muted p-10 text-center">
-                  <h3 className="font-serif text-2xl mb-4">Thank You</h3>
-                  <p className="text-muted-foreground leading-relaxed mb-8">
-                    Your message has been received. Our concierge will respond within one business day.
-                  </p>
-                  <button
-                    onClick={() => {
-                      setSubmitted(false)
-                      setForm({ name: "", email: "", subject: "General Enquiry", message: "" })
-                    }}
-                    className="bg-foreground text-background px-8 py-4 text-sm tracking-[0.2em] uppercase hover:opacity-80 transition-opacity"
-                  >
-                    Send Another Message
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-xs tracking-[0.2em] uppercase text-muted-foreground mb-3">
-                        Name
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={form.name}
-                        onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        placeholder="Your full name"
-                        className="w-full border-0 border-b border-border bg-transparent py-3 text-sm outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs tracking-[0.2em] uppercase text-muted-foreground mb-3">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={form.email}
-                        onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        placeholder="you@example.com"
-                        className="w-full border-0 border-b border-border bg-transparent py-3 text-sm outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground/50"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-xs tracking-[0.2em] uppercase text-muted-foreground mb-3">
-                      Subject
-                    </label>
-                    <select
-                      value={form.subject}
-                      onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                      className="w-full border-0 border-b border-border bg-background py-3 text-sm outline-none focus:border-foreground transition-colors"
-                    >
-                      <option>General Enquiry</option>
-                      <option>Order Support</option>
-                      <option>Shipping & Delivery</option>
-                      <option>Returns & Exchanges</option>
-                      <option>Product Care</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs tracking-[0.2em] uppercase text-muted-foreground mb-3">
-                      Message
-                    </label>
-                    <textarea
-                      required
-                      rows={5}
-                      value={form.message}
-                      onChange={(e) => setForm({ ...form, message: e.target.value })}
-                      placeholder="How may we assist you?"
-                      className="w-full border-0 border-b border-border bg-transparent py-3 text-sm outline-none focus:border-foreground transition-colors resize-none placeholder:text-muted-foreground/50"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="group inline-flex items-center gap-3 bg-foreground text-background px-8 py-4 text-sm tracking-[0.2em] uppercase hover:opacity-85 transition-opacity"
-                  >
-                    Send Message
-                  </button>
-                </form>
-              )}
+              <p className="text-muted-foreground leading-relaxed mb-8 text-sm">
+                Every message opens a support ticket with its own number, so you can follow the reply at any time.
+              </p>
+
+              <TicketForm />
             </motion.div>
 
             {/* Direct contact */}

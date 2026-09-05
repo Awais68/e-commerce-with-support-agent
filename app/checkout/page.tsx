@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { motion } from "framer-motion"
 import { ChevronLeft, Lock, AlertCircle, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -12,9 +12,16 @@ import { Label } from "@/components/ui/label"
 import { useCart } from "@/lib/cart-context"
 import { cn } from "@/lib/utils"
 
-type PaymentMethod = "nayapay" | "stripe"
+type PaymentMethod = "cod" | "nayapay" | "stripe"
+
+const COD_MAX = Number(process.env.NEXT_PUBLIC_COD_MAX_ORDER_VALUE) || 200000
 
 const paymentMethods: { id: PaymentMethod; name: string; description: string }[] = [
+  {
+    id: "cod",
+    name: "Cash on Delivery",
+    description: `Pay the rider in cash when your order arrives. Available on orders up to Rs. ${COD_MAX.toLocaleString()}.`,
+  },
   {
     id: "nayapay",
     name: "NayaPay",
@@ -63,6 +70,7 @@ function CheckoutContent() {
   const [step, setStep] = useState<"shipping" | "payment">("shipping")
   const { items: cartItems, subtotal } = useCart()
   const searchParams = useSearchParams()
+  const router = useRouter()
 
   const initialPaymentError =
     searchParams.get("payment") === "cancelled"
@@ -72,7 +80,7 @@ function CheckoutContent() {
         : null
 
   const [shipping, setShipping] = useState<ShippingState>(emptyShipping)
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("nayapay")
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod")
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState<string | null>(initialPaymentError)
   const [userId, setUserId] = useState<string | null>(null)
@@ -104,10 +112,14 @@ function CheckoutContent() {
     (key: keyof ShippingState) => (e: React.ChangeEvent<HTMLInputElement>) =>
       setShipping((prev) => ({ ...prev, [key]: e.target.value }))
 
-  const validateShipping = (): string | null => {
+  const validateShipping = (method: PaymentMethod): string | null => {
     if (!shipping.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(shipping.email)) return "Please enter a valid email address."
     if (!shipping.firstName || !shipping.lastName) return "Please enter your full name."
     if (!shipping.street || !shipping.city || !shipping.zip) return "Please complete your shipping address."
+    // The rider calls before delivery, so COD cannot go out without a number.
+    if (method === "cod" && !/^[+()\d][\d\s()+-]{8,}$/.test(shipping.phone.trim())) {
+      return "Please enter a valid phone number — it is required for Cash on Delivery."
+    }
     return null
   }
 
@@ -176,13 +188,40 @@ function CheckoutContent() {
     }
   }
 
+  const handleCod = async () => {
+    setProcessing(true)
+    setError(null)
+    try {
+      const res = await fetch("/api/orders/cod", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: cartItems.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, image: i.image, size: i.size, color: i.color })),
+          shipping: buildShippingPayload(),
+          userId,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok || !data.reference) {
+        setError(data?.error || "Could not place your Cash on Delivery order.")
+        return
+      }
+      router.push(`/checkout/success?provider=cod&reference=${encodeURIComponent(data.reference)}`)
+    } catch {
+      setError("Could not place your order. Please try again.")
+    } finally {
+      setProcessing(false)
+    }
+  }
+
   const handlePlaceOrder = async () => {
-    const missing = validateShipping()
+    const missing = validateShipping(paymentMethod)
     if (missing) {
       setError(missing)
       setStep("shipping")
       return
     }
+    if (paymentMethod === "cod") return handleCod()
     if (paymentMethod === "stripe") return handleStripe()
     return handleNayapay()
   }
@@ -266,7 +305,7 @@ function CheckoutContent() {
                     </div>
                     <div>
                       <Label htmlFor="phone" className="text-xs tracking-wide">
-                        Phone Number
+                        Phone Number{paymentMethod === "cod" ? " (required for Cash on Delivery)" : ""}
                       </Label>
                       <Input
                         id="phone"
@@ -274,7 +313,7 @@ function CheckoutContent() {
                         value={shipping.phone}
                         onChange={setShippingField("phone")}
                         className="mt-1.5 border-border/50 focus:border-foreground"
-                        placeholder="+1 (555) 000-0000"
+                        placeholder="+92 300 0000000"
                       />
                     </div>
                   </div>
@@ -407,7 +446,19 @@ function CheckoutContent() {
 
                 <div className="border border-border p-4 mb-8">
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Your card details are entered on the secure hosted payment page of {paymentMethod === "nayapay" ? "NayaPay" : "Stripe"}. We never see or store your card number. By placing your order, you agree to our{" "}
+                    {paymentMethod === "cod" ? (
+                      <>
+                        Keep <span className="text-foreground">Rs. {total.toLocaleString()}</span> in cash ready — the rider
+                        collects it at your door. Our courier will call the number above before delivery. By placing your
+                        order, you agree to our{" "}
+                      </>
+                    ) : (
+                      <>
+                        Your card details are entered on the secure hosted payment page of{" "}
+                        {paymentMethod === "nayapay" ? "NayaPay" : "Stripe"}. We never see or store your card number. By
+                        placing your order, you agree to our{" "}
+                      </>
+                    )}
                     <Link href="/terms" className="underline underline-offset-2">
                       Terms of Service
                     </Link>{" "}
@@ -430,7 +481,9 @@ function CheckoutContent() {
                       Processing…
                     </>
                   ) : (
-                    `Place Order — Rs. ${total.toLocaleString()}`
+                    paymentMethod === "cod"
+                      ? `Place COD Order — Rs. ${total.toLocaleString()}`
+                      : `Place Order — Rs. ${total.toLocaleString()}`
                   )}
                 </Button>
 

@@ -66,3 +66,16 @@ export function toAbsoluteImageUrl(image: string | undefined, baseUrl: string): 
     return null
   }
 }
+
+/**
+ * Cash on Delivery. No gateway involved, so the only real controls are an
+ * order-value ceiling (cash risk) and a verified phone number for the rider.
+ */
+export function getCodConfig() {
+  return {
+    enabled: process.env.COD_ENABLED !== "false",
+    maxOrderValue: Number(process.env.COD_MAX_ORDER_VALUE) || 200000,
+    courier: process.env.COD_DEFAULT_COURIER || "TCS Express",
+    etaDays: Number(process.env.COD_ETA_DAYS) || 5,
+  }
+}

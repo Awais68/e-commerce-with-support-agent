@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Search, ShoppingBag, Menu, X, User, ChevronDown } from "lucide-react"
+import { Search, ShoppingBag, Menu, X, User, ChevronDown, LifeBuoy } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { MiniCart } from "./mini-cart"
 import { useCart } from "@/lib/cart-context"
@@ -64,6 +64,7 @@ export function Navigation() {
     { href: "/", label: "Home" },
     { href: "/shop", label: "Shop" },
     { href: "/heritage", label: "Heritage" },
+    { href: "/support", label: "Support" },
   ]
 
   const navItemColor = isScrolled ? "text-foreground" : "text-white"
@@ -81,7 +82,7 @@ export function Navigation() {
         }`}
       >
         <nav className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="flex h-16 lg:h-20 items-center justify-between">
+          <div className="flex lg:grid lg:grid-cols-[1fr_auto_1fr] h-16 lg:h-20 items-center justify-between lg:justify-normal">
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -92,7 +93,7 @@ export function Navigation() {
             </button>
 
             {/* Desktop navigation */}
-            <div className="hidden lg:flex items-center gap-10">
+            <div className="hidden lg:flex items-center gap-8 xl:gap-10">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
@@ -157,14 +158,14 @@ export function Navigation() {
             {/* Logo */}
             <Link
               href="/"
-              className="absolute left-1/2 -translate-x-1/2 font-serif text-xl lg:text-2xl tracking-[0.3em] uppercase text-foreground"
+              className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0 lg:justify-self-center whitespace-nowrap font-serif text-xl lg:text-2xl tracking-[0.3em] uppercase text-foreground"
             >
               SN
               <span className="mx-3 tracking-[0.45em]">Collections</span>
             </Link>
 
             {/* Right icons */}
-            <div className="flex items-center gap-2 lg:gap-4">
+            <div className="flex items-center gap-2 lg:gap-4 lg:justify-self-end">
               <div ref={searchContainerRef} className="relative hidden sm:flex items-center">
                 <AnimatePresence>
                   {isSearchOpen && (
@@ -198,6 +199,15 @@ export function Navigation() {
                   {isSearchOpen ? <X className="h-5 w-5 stroke-[1.5]" /> : <Search className="h-5 w-5 stroke-[1.5]" />}
                 </button>
               </div>
+
+              <Link
+                href="/support"
+                aria-label="Customer agent"
+                title="Customer Agent"
+                className={`p-2 hidden sm:block transition-colors duration-500 ${iconColor}`}
+              >
+                <LifeBuoy className="h-5 w-5 stroke-[1.5]" />
+              </Link>
 
               <Link
                 href="/account/profile"
@@ -280,6 +290,23 @@ export function Navigation() {
                       </Link>
                     ))}
                   </div>
+                </div>
+                <div className="border-t border-border pt-6 mt-2">
+                  <p className="text-xs text-muted-foreground tracking-[0.15em] uppercase mb-4">Help</p>
+                  <Link
+                    href="/support"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block text-lg tracking-[0.15em] uppercase transition-colors text-foreground/60 hover:text-foreground mb-4"
+                  >
+                    Customer Agent
+                  </Link>
+                  <Link
+                    href="/track"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block text-lg tracking-[0.15em] uppercase transition-colors text-foreground/60 hover:text-foreground"
+                  >
+                    Track Order
+                  </Link>
                 </div>
                 <div className="border-t border-border pt-6 mt-2">
                   <p className="text-xs text-muted-foreground tracking-[0.15em] uppercase mb-4">Account</p>

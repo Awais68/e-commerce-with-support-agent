@@ -1,0 +1,16 @@
+{
+  "endpoint": "/webhooks/webform",
+  "method": "POST",
+  "note": "Single source of truth for the JSON the storefront POSTs to the FastAPI support backend. Both app/api/support/route.ts and scripts/check-support-contract.mjs read this file, so renaming a field here fails loudly in dev instead of silently 422-ing in production.",
+  "fields": {
+    "name": { "kind": "required", "type": "string" },
+    "email": { "kind": "required", "type": "string" },
+    "subject": { "kind": "required", "type": "string" },
+    "category": { "kind": "required", "type": "string" },
+    "priority": { "kind": "required", "type": "string" },
+    "message": { "kind": "required", "type": "string" },
+    "source": { "kind": "extra", "type": "string" },
+    "customer_id": { "kind": "extra", "type": "string|null" },
+    "order_reference": { "kind": "extra", "type": "string|null" }
+  }
+}

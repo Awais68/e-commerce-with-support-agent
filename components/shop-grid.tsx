@@ -5,6 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { useSearchParams } from "next/navigation"
 import { Navigation } from "@/components/navigation"
+import { AnimatedBackground } from "@/components/animated-background"
 import { PremiumFooter } from "@/components/premium-footer"
 import { QuickActions } from "@/components/product-quick-actions"
 import { catalogCategories, type CatalogProduct } from "@/lib/catalog"
@@ -25,6 +26,7 @@ export function ShopGrid({ products }: ShopGridProps) {
 
   return (
     <main className="min-h-screen bg-background">
+      <AnimatedBackground />
       <Navigation />
 
       {/* Hero Banner */}

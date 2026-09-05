@@ -6,7 +6,9 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "eslint .",
-    "start": "next start"
+    "start": "next start",
+    "seed:kb": "node scripts/seed-support-kb.mjs",
+    "check:support": "node scripts/check-support-contract.mjs"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",

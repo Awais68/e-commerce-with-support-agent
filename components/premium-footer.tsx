@@ -28,6 +28,7 @@ export function PremiumFooter() {
     ],
     support: [
       { label: "Contact Us", href: "/contact" },
+      { label: "Track Order", href: "/track" },
       { label: "Return Policy", href: "/returns" },
       { label: "Shipping", href: "/shipping" },
       { label: "Size Guide", href: "/size-guide" },

@@ -24,9 +24,16 @@ interface OrderItem {
 interface Order {
   reference: string
   status: string
+  provider: string
   total: number
   items: OrderItem[]
   createdAt: string
+}
+
+const PAYMENT_LABEL: Record<string, string> = {
+  cod: "Cash on Delivery",
+  stripe: "Card (Stripe)",
+  nayapay: "NayaPay",
 }
 
 function formatDate(iso: string) {
@@ -41,6 +48,14 @@ function statusLabel(status: string): { label: string; color: string } {
   switch (status) {
     case "paid":
       return { label: "Paid", color: "text-green-600" }
+    case "delivered":
+      return { label: "Delivered", color: "text-green-600" }
+    case "confirmed":
+      return { label: "Confirmed", color: "text-amber-600" }
+    case "dispatched":
+      return { label: "Dispatched", color: "text-amber-600" }
+    case "out_for_delivery":
+      return { label: "Out for delivery", color: "text-amber-600" }
     case "pending":
       return { label: "Processing", color: "text-amber-600" }
     case "refunded":
@@ -53,9 +68,8 @@ function statusLabel(status: string): { label: string; color: string } {
 }
 
 const StatusIcon = ({ status }: { status: string }) => {
-  const s = statusLabel(status).label
-  if (s === "Paid") return <CheckCircle className="h-4 w-4" />
-  if (s === "Processing") return <Truck className="h-4 w-4" />
+  if (status === "paid" || status === "delivered") return <CheckCircle className="h-4 w-4" />
+  if (status === "dispatched" || status === "out_for_delivery") return <Truck className="h-4 w-4" />
   return <Package className="h-4 w-4" />
 }
 
@@ -203,7 +217,19 @@ export default function OrdersPage() {
                                   <div className="text-sm">
                                     <span className="text-muted-foreground">Order Total: </span>
                                     <span className="font-medium">Rs. {order.total.toLocaleString()}</span>
+                                    <span className="text-muted-foreground"> · {PAYMENT_LABEL[order.provider] ?? order.provider}</span>
+                                    {order.provider === "cod" && order.status !== "delivered" && order.status !== "paid" && (
+                                      <span className="block text-xs text-muted-foreground mt-1">
+                                        Rs. {order.total.toLocaleString()} payable in cash on delivery
+                                      </span>
+                                    )}
                                   </div>
+                                  <Link
+                                    href={`/track?reference=${encodeURIComponent(order.reference)}`}
+                                    className="text-sm tracking-[0.15em] uppercase underline underline-offset-4 hover:no-underline transition-all"
+                                  >
+                                    Track Order
+                                  </Link>
                                 </div>
                               </div>
                             </motion.div>

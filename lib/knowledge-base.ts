@@ -43,10 +43,10 @@ export const knowledgeBase: KnowledgeEntry[] = [
   {
     id: "tracking",
     title: "Tracking",
-    keywords: ["track", "tracking", "where is my order", "status", "arrive", "arrived", "delay", "delayed"],
+    keywords: ["track", "tracking", "where is my order", "status", "arrive", "arrived", "delay", "delayed", "order number", "order no"],
     answer:
-      "Once your order ships, you will receive an email with a tracking number. You can also message us through the concierge chat and we will check the live status for you. Delivery is usually 3–5 business days domestically and 5–10 business days internationally.",
-    suggestions: ["I want to change my order", "Start a return"],
+      "Share your order number here — it looks like SN-XXXXXXX and is on your confirmation email and the checkout page — and I will read out the live status, courier, tracking number and expected delivery date. You can also see the full timeline yourself at /track. Delivery is usually 3–5 business days domestically and 5–10 business days internationally.",
+    suggestions: ["Where is my order SN-XXXXXXX?", "Do you offer Cash on Delivery?", "Start a return"],
   },
   {
     id: "returns",
@@ -59,10 +59,18 @@ export const knowledgeBase: KnowledgeEntry[] = [
   {
     id: "payments",
     title: "Payments",
-    keywords: ["pay", "payment", "card", "credit", "debit", "visa", "mastercard", "paypal", "cash", "on delivery", "cod", "bank", "installment", "installments", "emi", "checkout"],
+    keywords: ["pay", "payment", "card", "credit", "debit", "visa", "mastercard", "paypal", "bank", "installment", "installments", "emi", "checkout", "nayapay", "stripe"],
     answer:
-      "We accept all major credit and debit cards (Visa, Mastercard, American Express), PayPal, and secure bank transfers. In select regions we also offer installment payment at checkout. All transactions are encrypted and processed securely — we never store your card details.",
-    suggestions: ["Is my payment secure?", "How do I get an invoice?"],
+      "You can pay by card through Stripe, with your NayaPay wallet or linked card, or choose Cash on Delivery and pay the rider when your order arrives. All online transactions are encrypted and processed on the provider's hosted page — we never see or store your card details.",
+    suggestions: ["Do you offer Cash on Delivery?", "Is my payment secure?", "How do I track my order?"],
+  },
+  {
+    id: "cod",
+    title: "Cash on Delivery",
+    keywords: ["cod", "cash on delivery", "cash", "on delivery", "pay on delivery", "pay at door", "cash payment", "delivery pe payment"],
+    answer:
+      "Yes — Cash on Delivery is available across Pakistan on orders up to Rs. 200,000. Select Cash on Delivery at checkout, enter your address and a working phone number, and place the order. Our courier calls before delivery, and you pay the exact order total in cash at your door. Your order number is shown immediately so you can track it at /track or right here in this chat.",
+    suggestions: ["How do I track my COD order?", "What are your delivery charges?", "What is your return policy?"],
   },
   {
     id: "sizing",
@@ -265,6 +273,65 @@ export function buildSupportResponse(query: string): { reply: string; suggestion
     reply += `\n\nYou may also be interested in: ${relatedTitles.join(", ")}.`
   }
   return { reply, suggestions }
+}
+
+export interface ProductMatch {
+  id: string
+  name: string
+  price: number
+  category: string
+  image: string
+  hoverImage: string
+  description: string
+  longDescription: string
+  materials: string[]
+  sizes: { size: string; available: boolean }[]
+  colors: { name: string; hex: string; available: boolean }[]
+  madeIn: string
+}
+
+/**
+ * Matches the query against named catalog products so the chatbot can attach
+ * a real product card (image + full detail) alongside its text reply,
+ * independent of which reply engine (ops/LLM/knowledge-base) produced the text.
+ */
+function wordSet(text: string): string[] {
+  return text.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean)
+}
+
+export function findProductMatches(query: string, limit = 2): ProductMatch[] {
+  const tokens = tokenize(query)
+  if (tokens.length === 0) return []
+
+  const scored = products
+    .map((p) => {
+      const nameTokens = wordSet(p.name)
+      const materialWords = p.materials.flatMap(wordSet)
+      let score = 0
+      for (const token of tokens) {
+        if (nameTokens.includes(token)) score += 6
+        if (p.category.toLowerCase() === token) score += 4
+        if (materialWords.includes(token)) score += 2
+      }
+      return { p, score }
+    })
+    .filter((r) => r.score >= 4)
+    .sort((a, b) => b.score - a.score)
+
+  return scored.slice(0, limit).map(({ p }) => ({
+    id: p.id,
+    name: p.name,
+    price: p.price,
+    category: p.category,
+    image: p.image,
+    hoverImage: p.hoverImage,
+    description: p.description,
+    longDescription: p.longDescription,
+    materials: p.materials,
+    sizes: p.sizes,
+    colors: p.colors,
+    madeIn: p.madeIn,
+  }))
 }
 
 export { products, categories }
